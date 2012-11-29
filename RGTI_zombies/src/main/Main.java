@@ -53,17 +53,20 @@ public class Main {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         // Reset The Current Modelview Matrix
         GL11.glLoadIdentity();
-
         // Draw here
+        UserObject userObject = new UserObject(0.0f, 0.0f, 1.0f, 1.0f);
+        userObject.drawUserObject();
+        drawFloor();
 
         return true;
     }
 
+    private void drawFloor() {
+    }
+
     private boolean CreateGLWindow(String windowTitle, int windowWidth, int windowHeight, boolean fullScreen) throws LWJGLException {
-        System.out.println();
         DisplayMode bestMode = null;
-        for (DisplayMode d: Display.getAvailableDisplayModes())
-        {
+        for (DisplayMode d: Display.getAvailableDisplayModes()) {
             if (d.getWidth() == windowWidth && d.getHeight() == windowHeight && d.getFrequency() <= 85) {
                 if (bestMode == null || (d.getBitsPerPixel() >= bestMode.getBitsPerPixel() && d.getFrequency() > bestMode.getFrequency())) bestMode = d;
             }
