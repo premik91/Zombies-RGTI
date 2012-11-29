@@ -28,11 +28,12 @@ public class Main {
                 throw new Exception();
             }
             while (true) {
-                if (!DrawGLScene() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) || Display.isCloseRequested()) {
+                Display.update();
+                if (!Display.isActive() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) || Display.isCloseRequested()) {
                     // Quit if told to
                     break;
                 } else {
-                    Display.update();
+                    render();
                 }
                 // Toggle Fullscreen / Windowed Mode
                 if (Keyboard.isKeyDown(Settings.changeWindowModeKey)) {
@@ -48,21 +49,31 @@ public class Main {
         System.exit(0);
     }
 
-    private boolean DrawGLScene() {
-        // Clear Screen And Depth Buffer
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        // Reset The Current Modelview Matrix
+    private void render() {
+        GL11.glMatrixMode(GL11.GL_PROJECTION);
         GL11.glLoadIdentity();
-        // Draw here
-        UserObject userObject = new UserObject(0.0f, 0.0f, 1.0f, 1.0f);
-        userObject.drawUserObject();
-        drawFloor();
+        GL11.glOrtho(0, Display.getDisplayMode().getWidth(), 0, Display.getDisplayMode().getHeight(), -1, 1);
+        GL11.glMatrixMode(GL11.GL_MODELVIEW);
 
-        return true;
+        // clear the screen
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
+
+        // center square according to screen size
+        GL11.glPushMatrix();
+        GL11.glTranslatef(Display.getDisplayMode().getWidth() / 2, Display.getDisplayMode().getHeight() / 2, 0.0f);
+
+        // rotate square according to angle
+        GL11.glRotatef(10.0f, 0, 0, 1.0f);
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex2i(-50, -50);
+        GL11.glVertex2i(50, -50);
+        GL11.glVertex2i(50, 50);
+        GL11.glVertex2i(-50, 50);
+        GL11.glEnd();
+
+        GL11.glPopMatrix();
     }
 
-    private void drawFloor() {
-    }
 
     private boolean CreateGLWindow(String windowTitle, int windowWidth, int windowHeight, boolean fullScreen) throws LWJGLException {
         DisplayMode bestMode = null;
