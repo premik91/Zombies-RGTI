@@ -7,7 +7,7 @@
 	<classpathentry kind="lib" path="lib/lwjgl_util-2.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/lwjgl-2.1.0.jar">
 		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="RGTI_zombies/native"/>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="RGTI_zombies/native/macosx"/>
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/stack-alloc.jar"/>
