@@ -60,6 +60,7 @@ public class Main {
     }
 
     private boolean CreateGLWindow(String windowTitle, int windowWidth, int windowHeight, boolean fullScreen) throws LWJGLException {
+        System.out.println();
         DisplayMode bestMode = null;
         for (DisplayMode d: Display.getAvailableDisplayModes())
         {
