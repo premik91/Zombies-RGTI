@@ -8,8 +8,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import javax.swing.*;
 
-import jinngine.*;
-
 public class Main {
 
     public static void main(String[] args) {
