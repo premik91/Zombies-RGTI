@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scores>
+    <player>
+        <name>Jon</name>
+        <score id="zombies_killed">100</score>
+        <score id="persons_killed">20</score>
+    </player>
+</scores>
