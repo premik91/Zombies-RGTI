@@ -1,14 +1,22 @@
 package main;
 
+import models.MainCamera;
+import models.Terrain;
+import models.UserObject;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+
 import javax.swing.*;
 
 public class Main {
+
+    private MainCamera camera;
+    private Terrain terrain;
+    private UserObject user;
 
     public static void main(String[] args) {
         Main main = new Main();
@@ -16,30 +24,31 @@ public class Main {
     }
 
     private void startLoop() {
-        // Ask The User if fullscreen
         if (JOptionPane.showConfirmDialog(null, "Would You Like To Run In Fullscreen Mode?",
                 "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
-            // Windowed Mode
             Settings.fullScreen = false;
         }
+
         try {
             if (!CreateGLWindow(Settings.windowTitle, Settings.windowWidth, Settings.windowHeight, Settings.fullScreen)) {
                 // Quit If Window Was Not Created
                 throw new Exception();
             }
+            initializeObjects();
             while (true) {
-                Display.update();
+                resetDisplay();
+
                 if (!Display.isActive() || Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) || Display.isCloseRequested()) {
                     // Quit if told to
                     break;
-                } else {
-                    render();
                 }
+                render();
                 // Toggle Fullscreen / Windowed Mode
                 if (Keyboard.isKeyDown(Settings.changeWindowModeKey)) {
                     Settings.fullScreen = !Settings.fullScreen;
                     Display.setFullscreen(Settings.fullScreen);
                 }
+                Display.update();
             }
         } catch (Exception e) {
             e.getCause();
@@ -49,31 +58,30 @@ public class Main {
         System.exit(0);
     }
 
-    private void render() {
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
-        GL11.glLoadIdentity();
-        GL11.glOrtho(0, Display.getDisplayMode().getWidth(), 0, Display.getDisplayMode().getHeight(), -1, 1);
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-
-        // clear the screen
+    private void resetDisplay() {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT);
-
-        // center square according to screen size
-        GL11.glPushMatrix();
-        GL11.glTranslatef(Display.getDisplayMode().getWidth() / 2, Display.getDisplayMode().getHeight() / 2, 0.0f);
-
-        // rotate square according to angle
-        GL11.glRotatef(10.0f, 0, 0, 1.0f);
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex2i(-50, -50);
-        GL11.glVertex2i(50, -50);
-        GL11.glVertex2i(50, 50);
-        GL11.glVertex2i(-50, 50);
-        GL11.glEnd();
-
-        GL11.glPopMatrix();
+        GL11.glClearColor(1, 1, 1, 1);
     }
 
+    private void render() {
+        camera.render3D();
+        terrain.render3D();
+        user.render3D();
+    }
+
+    private void initializeObjects() {
+        camera = new MainCamera();
+        camera.translate(0, -1.0f, -10.0f);
+        camera.rotate(15.0f, 0.0f, 0.0f);
+
+        terrain = new Terrain();
+        terrain.scale(10.0f, 10.0f, 10.0f);
+        terrain.translate(5.0f, 10.0f, 10.0f);
+
+        user = new UserObject();
+        user.scale(0.3f, 0.3f, 0.3f);
+        user.translate(1.0f, 0.0f, 0.0f);
+    }
 
     private boolean CreateGLWindow(String windowTitle, int windowWidth, int windowHeight, boolean fullScreen) throws LWJGLException {
         DisplayMode bestMode = null;
@@ -92,8 +100,6 @@ public class Main {
         // Initialize Our Newly Created GL Window
         // Enable Smooth Shading
         GL11.glShadeModel(GL11.GL_SMOOTH);
-        // Red Background
-        GL11.glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
         // Depth Buffer Setup
         GL11.glClearDepth(1.0f);
         // Enables Depth Testing
