@@ -38,4 +38,12 @@ public abstract class Model3D {
     public void scale(float x, float y, float z) {
         this.scale.set(this.scale.x+x, this.scale.y+y, this.scale.z+z);
     }
+
+    public Vector3f getPosition() {
+        return this.position;
+    }
+
+    public void setPosition(float x, float y, float z) {
+        this.position.set(x, y, z);
+    }
 }
