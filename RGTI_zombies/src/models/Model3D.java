@@ -28,14 +28,14 @@ public abstract class Model3D {
     }
 
     public void translate(float x, float y, float z) {
-        this.position.set(x, y, z);
+        this.position.set(this.position.x+x, this.position.y+y, this.position.z+z);
     }
 
     public void rotate(float x, float y, float z) {
-        this.rotation.set(x, y, z);
+        this.rotation.set(this.rotation.x+x, this.rotation.y+y, this.rotation.z+z);
     }
 
     public void scale(float x, float y, float z) {
-        this.scale.set(x, y, z);
+        this.scale.set(this.scale.x+x, this.scale.y+y, this.scale.z+z);
     }
 }

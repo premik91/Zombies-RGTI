@@ -8,6 +8,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
 import javax.swing.*;
@@ -43,6 +44,7 @@ public class Main {
                     break;
                 }
                 render();
+                processInput();
                 // Toggle Fullscreen / Windowed Mode
                 if (Keyboard.isKeyDown(Settings.changeWindowModeKey)) {
                     Settings.fullScreen = !Settings.fullScreen;
@@ -92,9 +94,9 @@ public class Main {
         }
 
         Display.setDisplayMode(bestMode);
+        Display.create(new PixelFormat(8, 8, 8, 4));
         Display.setFullscreen(fullScreen);
         Display.setTitle(windowTitle);
-        Display.create();
         ReSizeGLScene(windowWidth, windowHeight);
 
         // Initialize Our Newly Created GL Window
@@ -132,4 +134,19 @@ public class Main {
         GL11.glLoadIdentity();
     }
 
+    protected void processInput() {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+            user.rotate(0.0f, 0.1f, 0.0f);
+        }
+
+        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {}
+        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {}
+        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {}
+        if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {}
+        if (Keyboard.isKeyDown(Keyboard.KEY_A)) {}
+        if (Keyboard.isKeyDown(Keyboard.KEY_E)) {}
+        if (Keyboard.isKeyDown(Keyboard.KEY_D)) {}
+        if (Keyboard.isKeyDown(Keyboard.KEY_W)) {}
+        if (Keyboard.isKeyDown(Keyboard.KEY_S)) {}
+    }
 }
