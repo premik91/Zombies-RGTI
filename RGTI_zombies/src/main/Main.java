@@ -33,15 +33,6 @@ public class Main {
     private Body box;
     private ArrayList<House> houses = new ArrayList<House>();
 
-    float dx = 0.0f;
-    float dy = 0.0f;
-    float dt = 0.0f; //length of frame
-    float lastTime = 0.0f; // when the last frame was
-    float time = 0.0f;
-
-    float mouseSensitivity = 0.05f;
-    float movementSpeed = 0.1f;
-
     public static void main(String[] args) {
         Main main = new Main();
         main.startLoop();
