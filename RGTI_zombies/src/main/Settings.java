@@ -26,4 +26,8 @@ public class Settings {
     public static final int notZombieObjectHealth = 1;
     public static final int notZombieObjectSpeed = 1;
 
+    //Houses
+    public static final int minimalHouseHeight = 2;
+    public static final int minimalHouseLength = 200;
+    public static final int minWidthBetweenHouses = 500;
 }

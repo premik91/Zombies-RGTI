@@ -2,9 +2,13 @@ package main;
 
 import jinngine.collision.SAP2;
 import jinngine.math.Vector3;
-import jinngine.physics.*;
+import jinngine.physics.Body;
+import jinngine.physics.DefaultDeactivationPolicy;
+import jinngine.physics.DefaultScene;
+import jinngine.physics.Scene;
 import jinngine.physics.force.GravityForce;
 import jinngine.physics.solver.NonsmoothNonlinearConjugateGradient;
+import models.House;
 import models.MainCamera;
 import models.Terrain;
 import models.UserObject;
@@ -18,7 +22,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
-import javax.swing.*;
+import java.util.ArrayList;
 
 public class Main {
 
@@ -27,6 +31,16 @@ public class Main {
     private UserObject user;
     private Scene scene;
     private Body box;
+    private ArrayList<House> houses = new ArrayList<House>();
+
+    float dx = 0.0f;
+    float dy = 0.0f;
+    float dt = 0.0f; //length of frame
+    float lastTime = 0.0f; // when the last frame was
+    float time = 0.0f;
+
+    float mouseSensitivity = 0.05f;
+    float movementSpeed = 0.1f;
 
     public static void main(String[] args) {
         Main main = new Main();
@@ -46,18 +60,12 @@ public class Main {
                 // Quit If Window Was Not Created
                 throw new Exception();
             }
-
             initializeObjects();
-
             //hide the mouse
 //            Mouse.setGrabbed(true);
-            long frameSync = System.currentTimeMillis();
-            while (!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested()) {
-                long currSync = System.currentTimeMillis();
-                if ((currSync - frameSync) < 5) continue;
-                frameSync = System.currentTimeMillis();
-                resetDisplay();
 
+            while (!Keyboard.isKeyDown(Settings.exitKey) && !Display.isCloseRequested()) {
+                resetDisplay();
                 if (!Display.isActive()) {
                     // Quit if told to
                     break;
@@ -90,6 +98,10 @@ public class Main {
         camera.render3D();
         terrain.render3D();
         user.render3D();
+        for(House house: houses) {
+            house.render3D();
+        }
+        System.out.printf("%f, %f, %f\n",camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
     }
 
     private void applyPhysics() {
@@ -98,16 +110,40 @@ public class Main {
     }
 
     private void initializeObjects() {
-
         scene = new DefaultScene(new SAP2(), new NonsmoothNonlinearConjugateGradient(44), new DefaultDeactivationPolicy());
         scene.setTimestep(0.01);
+
+        camera = new MainCamera();
+        camera.translate(0.0f, -2.0f, -5.0f);
 
         terrain = new Terrain();
         terrain.scale(50.0f, 1000.0f, 1000.0f);
         terrain.translate(0.0f, -0.5f, 0.0f);
 
-        Body floor = new Body("floor", new jinngine.geometry.Box(100,5, 100));
-        floor.setPosition(new Vector3(0,-2.5,0));
+        float[] position = {0, 0, 0};
+        float[] width;
+        for(int i=0; i<10; i++) {
+            // left house
+            House h = new House(new float[]{1.0f,0,0});
+            width = new float[]{1.0f, (float) Math.random()*1+Settings.minimalHouseHeight, (float) Math.random()*1};
+
+            // position house
+            h.scale(width[0],width[1],width[2]);
+            h.translate(position[0],position[1],position[2]);
+
+            // add house for collision detection
+            Body house = new Body("house", new jinngine.geometry.Box(width[0],width[1],width[2]));
+            house.setPosition(new Vector3(position[0],position[1],position[2]));
+            house.setFixed(true);
+            scene.addBody(house);
+            position[0] = width[0];
+            position[1] = width[1];
+            position[2] = width[2];
+            houses.add(h);
+        }
+
+        Body floor = new Body("floor", new jinngine.geometry.Box(100,1, 100));
+        floor.setPosition(new Vector3(0,0,0));
         floor.setFixed(true);
 
         Body back = new Body( "back", new jinngine.geometry.Box(50,10,100));
@@ -133,9 +169,6 @@ public class Main {
         box = new Body( "box", new jinngine.geometry.Box(0.3f,0.3f,0.3f) );
         box.setPosition(new Vector3(0.0f, 1.0f, 0.0f));
 
-        camera = new MainCamera();
-        camera.translate(user.getPosition().x, -2.0f, user.getPosition().z-6.0f);
-
         // add all to scene
         scene.addBody(floor);
         scene.addBody(back);
@@ -145,8 +178,6 @@ public class Main {
         scene.addBody(box);
 
         scene.addForce(new GravityForce(box));
-
-
     }
 
     private boolean CreateGLWindow(String windowTitle, int windowWidth, int windowHeight, boolean fullScreen) throws LWJGLException {
@@ -202,51 +233,30 @@ public class Main {
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
             user.translate(-0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-            box.updateTransformations();
-            camera.translate(user.getPosition().x, -2.0f, user.getPosition().z-6.0f);
-            box.clearForces();
-            scene.addForce(new GravityForce(box));
+            camera.translate(0.1f, 0.0f, 0.0f);
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
             user.translate(0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-            box.updateTransformations();
             camera.translate(-0.1f, 0.0f, 0.0f);
-            box.clearForces();
-            scene.addForce(new GravityForce(box));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
             user.translate(0.0f, 0.0f, -0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-            box.updateTransformations();
             camera.translate(0.0f, 0.0f, 0.1f);
-            GLU.gluLookAt(camera.getPosition().x, camera.getPosition().y,camera.getPosition().y, user.getPosition().x,user.getPosition().y,user.getPosition().z, 0, 1, 0);
-            box.clearForces();
-            scene.addForce(new GravityForce(box));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
             user.translate(0.0f, 0.0f, 0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-            box.updateTransformations();
-            camera.translate(user.getPosition().x, -2.0f, user.getPosition().z-6.0f);
-            box.clearForces();
-            scene.addForce(new GravityForce(box));
+            camera.translate(0.0f, 0.0f, -0.1f);
         }
 
 
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-            System.out.println(user.getPosition().y);
-            box.clearForces();
-            scene.addForce(new GravityForce(box));
-
-            if (user.getPosition().y > 0.8f) {
-                return;
-            }
-
-            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y + 1.25, user.getPosition().z));
+            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y + 0.05, user.getPosition().z));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {}
