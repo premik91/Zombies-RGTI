@@ -28,17 +28,6 @@ public class Main {
     private Scene scene;
     private Body box;
 
-
-    float dx = 0.0f;
-    float dy = 0.0f;
-    float dt = 0.0f; //length of frame
-    float lastTime = 0.0f; // when the last frame was
-    float time = 0.0f;
-
-    float mouseSensitivity = 0.05f;
-    float movementSpeed = 0.1f;
-
-
     public static void main(String[] args) {
         Main main = new Main();
         main.startLoop();
@@ -62,8 +51,11 @@ public class Main {
 
             //hide the mouse
 //            Mouse.setGrabbed(true);
-
+            long frameSync = System.currentTimeMillis();
             while (!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested()) {
+                long currSync = System.currentTimeMillis();
+                if ((currSync - frameSync) < 5) continue;
+                frameSync = System.currentTimeMillis();
                 resetDisplay();
 
                 if (!Display.isActive()) {
@@ -98,7 +90,6 @@ public class Main {
         camera.render3D();
         terrain.render3D();
         user.render3D();
-        System.out.printf("%f, %f, %f\n",camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
     }
 
     private void applyPhysics() {
@@ -111,15 +102,12 @@ public class Main {
         scene = new DefaultScene(new SAP2(), new NonsmoothNonlinearConjugateGradient(44), new DefaultDeactivationPolicy());
         scene.setTimestep(0.01);
 
-        camera = new MainCamera();
-        camera.translate(0.0f, -2.0f, -5.0f);
-
         terrain = new Terrain();
         terrain.scale(50.0f, 1000.0f, 1000.0f);
         terrain.translate(0.0f, -0.5f, 0.0f);
 
-        Body floor = new Body("floor", new jinngine.geometry.Box(100,1, 100));
-        floor.setPosition(new Vector3(0,0,0));
+        Body floor = new Body("floor", new jinngine.geometry.Box(100,5, 100));
+        floor.setPosition(new Vector3(0,-2.5,0));
         floor.setFixed(true);
 
         Body back = new Body( "back", new jinngine.geometry.Box(50,10,100));
@@ -144,6 +132,9 @@ public class Main {
 
         box = new Body( "box", new jinngine.geometry.Box(0.3f,0.3f,0.3f) );
         box.setPosition(new Vector3(0.0f, 1.0f, 0.0f));
+
+        camera = new MainCamera();
+        camera.translate(user.getPosition().x, -2.0f, user.getPosition().z-6.0f);
 
         // add all to scene
         scene.addBody(floor);
@@ -211,30 +202,51 @@ public class Main {
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
             user.translate(-0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-            camera.translate(0.1f, 0.0f, 0.0f);
+            box.updateTransformations();
+            camera.translate(user.getPosition().x, -2.0f, user.getPosition().z-6.0f);
+            box.clearForces();
+            scene.addForce(new GravityForce(box));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
             user.translate(0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
+            box.updateTransformations();
             camera.translate(-0.1f, 0.0f, 0.0f);
+            box.clearForces();
+            scene.addForce(new GravityForce(box));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
             user.translate(0.0f, 0.0f, -0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
+            box.updateTransformations();
             camera.translate(0.0f, 0.0f, 0.1f);
+            GLU.gluLookAt(camera.getPosition().x, camera.getPosition().y,camera.getPosition().y, user.getPosition().x,user.getPosition().y,user.getPosition().z, 0, 1, 0);
+            box.clearForces();
+            scene.addForce(new GravityForce(box));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
             user.translate(0.0f, 0.0f, 0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-            camera.translate(0.0f, 0.0f, -0.1f);
+            box.updateTransformations();
+            camera.translate(user.getPosition().x, -2.0f, user.getPosition().z-6.0f);
+            box.clearForces();
+            scene.addForce(new GravityForce(box));
         }
 
 
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y + 0.05, user.getPosition().z));
+            System.out.println(user.getPosition().y);
+            box.clearForces();
+            scene.addForce(new GravityForce(box));
+
+            if (user.getPosition().y > 0.8f) {
+                return;
+            }
+
+            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y + 1.25, user.getPosition().z));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_Q)) {}
