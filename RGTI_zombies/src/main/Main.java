@@ -105,7 +105,7 @@ public class Main {
         scene.setTimestep(0.01);
 
         camera = new MainCamera();
-        camera.translate(0.0f, -2.0f, -5.0f);
+        camera.translate(0.0f, -2.0f, -7.0f);
 
         terrain = new Terrain();
         terrain.scale(50.0f, 1000.0f, 1000.0f);
@@ -133,8 +133,8 @@ public class Main {
             houses.add(h);
         }
 
-        Body floor = new Body("floor", new jinngine.geometry.Box(100,1, 100));
-        floor.setPosition(new Vector3(0,0,0));
+        Body floor = new Body("floor", new jinngine.geometry.Box(100,5, 100));
+        floor.setPosition(new Vector3(0,-3,0));
         floor.setFixed(true);
 
         Body back = new Body( "back", new jinngine.geometry.Box(50,10,100));
@@ -225,24 +225,32 @@ public class Main {
             user.translate(-0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.1f, 0.0f, 0.0f);
+            box.clearForces();
+            scene.addForce(new GravityForce(box));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
             user.translate(0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(-0.1f, 0.0f, 0.0f);
+            box.clearForces();
+            scene.addForce(new GravityForce(box));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
             user.translate(0.0f, 0.0f, -0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.0f, 0.0f, 0.1f);
+            box.clearForces();
+            scene.addForce(new GravityForce(box));
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
             user.translate(0.0f, 0.0f, 0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.0f, 0.0f, -0.1f);
+            box.clearForces();
+            scene.addForce(new GravityForce(box));
         }
 
 
