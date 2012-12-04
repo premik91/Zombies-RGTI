@@ -45,10 +45,12 @@ public class Main {
     }
 
     private void startLoop() {
-        if (JOptionPane.showConfirmDialog(null, "Would You Like To Run In Fullscreen Mode?",
-                "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
-            Settings.fullScreen = false;
-        }
+//        if (JOptionPane.showConfirmDialog(null, "Would You Like To Run In Fullscreen Mode?",
+//                "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
+//            Settings.fullScreen = false;
+//        }
+        Settings.fullScreen = false;
+
 
         try {
             if (!CreateGLWindow(Settings.windowTitle, Settings.windowWidth, Settings.windowHeight, Settings.fullScreen)) {
@@ -59,7 +61,7 @@ public class Main {
             initializeObjects();
 
             //hide the mouse
-            Mouse.setGrabbed(true);
+//            Mouse.setGrabbed(true);
 
             while (!Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !Display.isCloseRequested()) {
                 resetDisplay();
@@ -69,23 +71,9 @@ public class Main {
                     break;
                 }
                 render();
+                processInput();
                 applyPhysics();
 
-                time = Sys.getTime();
-                dt = (time - lastTime)/1000.0f;
-                lastTime = time;
-
-                //distance in mouse movement from the last getDX() call.
-                dx = Mouse.getDX();
-                //distance in mouse movement from the last getDY() call.
-                dy = Mouse.getDY();
-
-                //controll camera yaw from x movement fromt the mouse
-                camera.yaw(dx * mouseSensitivity);
-                //controll camera pitch from y movement fromt the mouse
-                camera.pitch(dy * mouseSensitivity);
-
-                processInput();
                 // Toggle Fullscreen / Windowed Mode
                 if (Keyboard.isKeyDown(Settings.changeWindowModeKey)) {
                     Settings.fullScreen = !Settings.fullScreen;
@@ -107,9 +95,8 @@ public class Main {
     }
 
     private void render() {
-        camera.lookThrough();
+        camera.render3D();
         terrain.render3D();
-//        camera.render3D();
         user.render3D();
         System.out.printf("%f, %f, %f\n",camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
     }
@@ -128,35 +115,35 @@ public class Main {
         camera.translate(0.0f, -2.0f, -5.0f);
 
         terrain = new Terrain();
-        terrain.scale(100.0f, 100.0f, 100.0f);
+        terrain.scale(50.0f, 1000.0f, 1000.0f);
         terrain.translate(0.0f, -0.5f, 0.0f);
 
         Body floor = new Body("floor", new jinngine.geometry.Box(100,1, 100));
         floor.setPosition(new Vector3(0,0,0));
         floor.setFixed(true);
 
-        Body back = new Body( "back", new jinngine.geometry.Box(100,10,100));
-        back.setPosition(new Vector3(0,0,-100));
+        Body back = new Body( "back", new jinngine.geometry.Box(50,10,100));
+        back.setPosition(new Vector3(0,0,-1000));
         back.setFixed(true);
 
-        Body front = new Body( "front", new jinngine.geometry.Box(100,100,10));
-        front.setPosition(new Vector3(0,0,100));
+        Body front = new Body( "front", new jinngine.geometry.Box(50,100,10));
+        front.setPosition(new Vector3(0,0,1000));
         front.setFixed(true);
 
-        Body left = new Body( "left", new jinngine.geometry.Box(10,100,100));
-        left.setPosition(new Vector3(-100,0,0));
+        Body left = new Body( "left", new jinngine.geometry.Box(10,100,1000));
+        left.setPosition(new Vector3(-50,0,0));
         left.setFixed(true);
 
-        Body right = new Body( "right", new jinngine.geometry.Box(10,100,100));
-        right.setPosition(new Vector3(100,0,0));
+        Body right = new Body( "right", new jinngine.geometry.Box(10,100,1000));
+        right.setPosition(new Vector3(50,0,0));
         right.setFixed(true);
 
         user = new UserObject();
         user.scale(0.3f, 0.3f, 0.3f);
-        user.translate(0.0f, 2.0f, 0.0f);
+        user.translate(0.0f, 1.0f, 0.0f);
 
         box = new Body( "box", new jinngine.geometry.Box(0.3f,0.3f,0.3f) );
-        box.setPosition(new Vector3(0.0f, 2.0f, 0.0f));
+        box.setPosition(new Vector3(0.0f, 1.0f, 0.0f));
 
         // add all to scene
         scene.addBody(floor);
@@ -221,63 +208,32 @@ public class Main {
     }
 
     protected void processInput() {
-
-        if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
-            float distance = 0.1f;
-            float posX = (distance * (float)Math.sin(Math.toRadians(camera.getYaw())));
-            float posZ = (distance * (float)Math.cos(Math.toRadians(camera.getYaw())));
-            camera.translate(-posX, 0, posZ);
+        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+            user.translate(-0.1f, 0.0f, 0.0f);
+            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
+            camera.translate(0.1f, 0.0f, 0.0f);
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-            float distance = movementSpeed*dt;
-            float posX = (distance * (float)Math.sin(Math.toRadians(camera.getYaw())));
-            float posZ = (distance * (float)Math.cos(Math.toRadians(camera.getYaw())));
-            camera.translate(posX, 0, -posZ);
+        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+            user.translate(0.1f, 0.0f, 0.0f);
+            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
+            camera.translate(-0.1f, 0.0f, 0.0f);
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-            float distance = movementSpeed*dt;
-            float posX = (distance * (float)Math.sin(Math.toRadians(camera.getYaw()-90)));
-            float posZ = (distance * (float)Math.cos(Math.toRadians(camera.getYaw()-90)));
-            camera.translate(-posX, 0, posZ);
+        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+            user.translate(0.0f, 0.0f, -0.1f);
+            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
+            camera.translate(0.0f, 0.0f, 0.1f);
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-            float distance = movementSpeed*dt;
-            float posX = (distance * (float)Math.sin(Math.toRadians(camera.getYaw()+90)));
-            float posZ = (distance * (float)Math.cos(Math.toRadians(camera.getYaw()+90)));
-            camera.translate(-posX, 0, posZ);
+        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+            user.translate(0.0f, 0.0f, 0.1f);
+            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
+            camera.translate(0.0f, 0.0f, -0.1f);
         }
 
-//        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
-//            user.translate(-0.1f, 0.0f, 0.0f);
-//            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-//            camera.translate(0.1f, 0.0f, 0.0f);
-//        }
-//
-//        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
-//            user.translate(0.1f, 0.0f, 0.0f);
-//            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-//            camera.translate(-0.1f, 0.0f, 0.0f);
-//        }
-//
-//        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-//            user.translate(0.0f, 0.0f, -0.1f);
-//            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-//            camera.translate(0.0f, 0.0f, 0.1f);
-//        }
-//
-//        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-//            user.translate(0.0f, 0.0f, 0.1f);
-//            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-//            camera.translate(0.0f, 0.0f, -0.1f);
-//        }
 
-
-        if (Keyboard.isKeyDown(Keyboard.KEY_SPACE))
-        {
-//            user.translate(0.0f, -0.1f, 0.0f);
+        if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y + 0.05, user.getPosition().z));
         }
 
