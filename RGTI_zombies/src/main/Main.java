@@ -55,7 +55,16 @@ public class Main {
             //hide the mouse
 //            Mouse.setGrabbed(true);
 
+            long FPSSync = System.currentTimeMillis();
             while (!Keyboard.isKeyDown(Settings.exitKey) && !Display.isCloseRequested()) {
+                long currSync = System.currentTimeMillis();
+
+                if (currSync-FPSSync < 10) {
+                    continue;
+                }
+
+                FPSSync = System.currentTimeMillis();
+
                 resetDisplay();
                 if (!Display.isActive()) {
                     // Quit if told to
@@ -127,9 +136,9 @@ public class Main {
             house.setPosition(new Vector3(position[0],position[1],position[2]));
             house.setFixed(true);
             scene.addBody(house);
-            position[0] = width[0];
-            position[1] = width[1];
-            position[2] = width[2];
+            position[0] += width[0];
+            position[1] += width[1];
+            position[2] += width[2];
             houses.add(h);
         }
 
