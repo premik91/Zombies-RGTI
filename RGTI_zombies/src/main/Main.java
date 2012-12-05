@@ -134,10 +134,10 @@ public class Main {
             };
             // position house
             house.scale(width[0], width[1], width[2]);
-            house.translate(positionLeft[0], positionLeft[1], positionLeft[2]);
+            house.translate(-positionLeft[0], positionLeft[1], positionLeft[2]);
             houses.add(house);
-            positionLeft[2] -= width[2];
-    /*
+            positionLeft[2] -= width[2] + spaceBetweenHouses;
+
             // RIGHT HOUSE
             house = new House(new float[]{(float) Math.random()*1,(float) Math.random()*1,(float) Math.random()*1});
             width = new float[]{
@@ -149,16 +149,16 @@ public class Main {
             house.scale(width[0], width[1], width[2]);
             house.translate(positionRight[0] + mainRoadWidth, positionRight[1], positionRight[2]);
             houses.add(house);
-            positionRight[2] -= width[2] + spaceBetweenHouses;*/
+            positionRight[2] -= width[2] + spaceBetweenHouses;
         }
-        /*
+
         Body leftHouses = new Body("leftHouses", new jinngine.geometry.Box(minHouseWidth, minimalHouseHeight, positionLeft[2]));
         leftHouses.setPosition(new Vector3(0,0,0));
         leftHouses.setFixed(true);
 
         Body rightHouses = new Body("rightHouses", new jinngine.geometry.Box(minHouseWidth, minimalHouseHeight, positionRight[2]));
         rightHouses.setPosition(new Vector3(mainRoadWidth,0,0));
-        rightHouses.setFixed(true);*/
+        rightHouses.setFixed(true);
 
         Body floor = new Body("floor", new jinngine.geometry.Box(100,5, 100));
         floor.setPosition(new Vector3(0,-3,0));
@@ -193,8 +193,8 @@ public class Main {
         scene.addBody(front);
         scene.addBody(left);
         scene.addBody(right);
-        //scene.addBody(leftHouses);
-        //scene.addBody(rightHouses);
+        scene.addBody(leftHouses);
+        scene.addBody(rightHouses);
         scene.addBody(box);
 
         scene.addForce(new GravityForce(box));
