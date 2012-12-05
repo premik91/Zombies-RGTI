@@ -7,6 +7,7 @@ public abstract class Model3D {
 
     protected Vector3f position = new Vector3f();
     protected Vector3f rotation = new Vector3f();
+
     protected Vector3f scale = new Vector3f();
 
     protected abstract void render();
@@ -45,5 +46,9 @@ public abstract class Model3D {
 
     public void setPosition(float x, float y, float z) {
         this.position.set(x, y, z);
+    }
+
+    public Vector3f getScale() {
+        return scale;
     }
 }

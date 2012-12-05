@@ -27,7 +27,11 @@ public class Settings {
     public static final int notZombieObjectSpeed = 1;
 
     //Houses
+    public static final int houseHeightBounds = 8;
     public static final int minimalHouseHeight = 2;
-    public static final int minimalHouseLength = 200;
-    public static final int minWidthBetweenHouses = 500;
+    public static final int houseLengthBounds = 5;
+    public static final int minimalHouseLength = 4;
+    public static final int mainRoadWidth = 12;
+    public static final int minHouseWidth = 1;
+    public static final int spaceBetweenHouses = 4;
 }

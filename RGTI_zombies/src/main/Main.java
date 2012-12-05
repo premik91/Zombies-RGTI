@@ -13,9 +13,7 @@ import models.MainCamera;
 import models.Terrain;
 import models.UserObject;
 import org.lwjgl.LWJGLException;
-import org.lwjgl.Sys;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
@@ -23,6 +21,9 @@ import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
 import java.util.ArrayList;
+
+import static main.Settings.*;
+import static main.Settings.minHouseWidth;
 
 public class Main {
 
@@ -43,11 +44,11 @@ public class Main {
 //                "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
 //            Settings.fullScreen = false;
 //        }
-        Settings.fullScreen = false;
+        fullScreen = false;
 
 
         try {
-            if (!CreateGLWindow(Settings.windowTitle, Settings.windowWidth, Settings.windowHeight, Settings.fullScreen)) {
+            if (!CreateGLWindow(windowTitle, windowWidth, windowHeight, fullScreen)) {
                 // Quit If Window Was Not Created
                 throw new Exception();
             }
@@ -56,7 +57,7 @@ public class Main {
 //            Mouse.setGrabbed(true);
 
             long FPSSync = System.currentTimeMillis();
-            while (!Keyboard.isKeyDown(Settings.exitKey) && !Display.isCloseRequested()) {
+            while (!Keyboard.isKeyDown(exitKey) && !Display.isCloseRequested()) {
                 long currSync = System.currentTimeMillis();
 
                 if (currSync-FPSSync < 10) {
@@ -75,9 +76,9 @@ public class Main {
                 applyPhysics();
 
                 // Toggle Fullscreen / Windowed Mode
-                if (Keyboard.isKeyDown(Settings.changeWindowModeKey)) {
-                    Settings.fullScreen = !Settings.fullScreen;
-                    Display.setFullscreen(Settings.fullScreen);
+                if (Keyboard.isKeyDown(changeWindowModeKey)) {
+                    fullScreen = !fullScreen;
+                    Display.setFullscreen(fullScreen);
                 }
                 Display.update();
             }
@@ -101,7 +102,7 @@ public class Main {
         for(House house: houses) {
             house.render3D();
         }
-        System.out.printf("%f, %f, %f\n",camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
+        //System.out.printf("%f, %f, %f\n",camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
     }
 
     private void applyPhysics() {
@@ -120,27 +121,44 @@ public class Main {
         terrain.scale(50.0f, 1000.0f, 1000.0f);
         terrain.translate(0.0f, -0.5f, 0.0f);
 
-        float[] position = {0, 0, 0};
+        float[] positionLeft = {0, 0, 0}, positionRight = {0, 0, 0};
         float[] width;
-        for(int i=0; i<10; i++) {
-            // left house
-            House h = new House(new float[]{1.0f,0,0});
-            width = new float[]{1.0f, (float) Math.random()*1+Settings.minimalHouseHeight, (float) Math.random()*1};
-
+        House house;
+        for(int i=0; i<30; i++) {
+            // LEFT HOUSE
+            house = new House(new float[]{(float) Math.random()*1,(float) Math.random()*1,(float) Math.random()*1});
+            width = new float[]{
+                    minHouseWidth,
+                    (float) Math.random()* houseHeightBounds + minimalHouseHeight,
+                    (float) Math.floor(Math.random()* houseLengthBounds + minimalHouseLength)
+            };
             // position house
-            h.scale(width[0],width[1],width[2]);
-            h.translate(position[0],position[1],position[2]);
-
-            // add house for collision detection
-            Body house = new Body("house", new jinngine.geometry.Box(width[0],width[1],width[2]));
-            house.setPosition(new Vector3(position[0],position[1],position[2]));
-            house.setFixed(true);
-            scene.addBody(house);
-            position[0] += width[0];
-            position[1] += width[1];
-            position[2] += width[2];
-            houses.add(h);
+            house.scale(width[0], width[1], width[2]);
+            house.translate(positionLeft[0], positionLeft[1], positionLeft[2]);
+            houses.add(house);
+            positionLeft[2] -= width[2];
+    /*
+            // RIGHT HOUSE
+            house = new House(new float[]{(float) Math.random()*1,(float) Math.random()*1,(float) Math.random()*1});
+            width = new float[]{
+                    minHouseWidth,
+                    (float) Math.random()* houseHeightBounds + minimalHouseHeight,
+                    (float) Math.random() * houseLengthBounds + minimalHouseLength
+            };
+            // position house
+            house.scale(width[0], width[1], width[2]);
+            house.translate(positionRight[0] + mainRoadWidth, positionRight[1], positionRight[2]);
+            houses.add(house);
+            positionRight[2] -= width[2] + spaceBetweenHouses;*/
         }
+        /*
+        Body leftHouses = new Body("leftHouses", new jinngine.geometry.Box(minHouseWidth, minimalHouseHeight, positionLeft[2]));
+        leftHouses.setPosition(new Vector3(0,0,0));
+        leftHouses.setFixed(true);
+
+        Body rightHouses = new Body("rightHouses", new jinngine.geometry.Box(minHouseWidth, minimalHouseHeight, positionRight[2]));
+        rightHouses.setPosition(new Vector3(mainRoadWidth,0,0));
+        rightHouses.setFixed(true);*/
 
         Body floor = new Body("floor", new jinngine.geometry.Box(100,5, 100));
         floor.setPosition(new Vector3(0,-3,0));
@@ -164,7 +182,7 @@ public class Main {
 
         user = new UserObject();
         user.scale(0.3f, 0.3f, 0.3f);
-        user.translate(0.0f, 1.0f, 0.0f);
+        user.translate(1.0f, 1.0f, 0.0f);
 
         box = new Body( "box", new jinngine.geometry.Box(0.3f,0.3f,0.3f) );
         box.setPosition(new Vector3(0.0f, 1.0f, 0.0f));
@@ -175,6 +193,8 @@ public class Main {
         scene.addBody(front);
         scene.addBody(left);
         scene.addBody(right);
+        //scene.addBody(leftHouses);
+        //scene.addBody(rightHouses);
         scene.addBody(box);
 
         scene.addForce(new GravityForce(box));
