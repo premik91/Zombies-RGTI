@@ -2,11 +2,21 @@ package models;
 
 import jinngine.physics.Body;
 
+import static main.Settings.bombMaxPower;
 import static org.lwjgl.opengl.GL11.*;
-import static main.Settings.zombieObjectHealth;
 
+/**
+ * Created with IntelliJ IDEA.
+ * User: Aljaz
+ * Date: 12/6/12
+ * Time: 6:57 PM
+ * To change this template use File | Settings | File Templates.
+ */
+public class Bomb extends Model3D {
 
-public class Zombie extends Model3D {
+    Body bomb_body;
+    int bombPower = bombMaxPower;
+
     float[] a = {-1.0f, -1.0f, 1.0f};
     float[] b = {1.0f, -1.0f, 1.0f};
     float[] c = {-1.0f, 1.0f, 1.0f};
@@ -17,33 +27,22 @@ public class Zombie extends Model3D {
     float[] g = {-1.0f, 1.0f, -1.0f};
     float[] h = {1.0f, 1.0f, -1.0f};
 
-    Body zombie_body;
-    int zombieCurrentHealth = zombieObjectHealth;
-
-    public Zombie(Body zombie_body) {
-        this.zombie_body = zombie_body;
+    public Bomb(Body bomb_body) {
+        this.bomb_body = bomb_body;
     }
 
-    public Body getZombie_body() {
-        return zombie_body;
+    public int getBombPower() {
+        return bombPower;
     }
 
-    public void setZombie_body(Body zombie_body) {
-        this.zombie_body = zombie_body;
-    }
-
-    public int getZombieCurrentHealth() {
-        return zombieCurrentHealth;
-    }
-
-    public void setZombieCurrentHealth(int zombieCurrentHealth) {
-        this.zombieCurrentHealth = zombieCurrentHealth;
+    public void setBombPower(int bombPower) {
+        this.bombPower = bombPower;
     }
 
     @Override
     public void render() {
         glBegin(GL_QUADS);
-        glColor4f(1.0f, 1.0f, 0, 1.0f);
+        glColor4f(1.0f, 0.0f, 0, 1.0f);
 
         glVertex3f(h[0],h[1],h[2]);
         glVertex3f(g[0],g[1],g[2]);
@@ -76,5 +75,13 @@ public class Zombie extends Model3D {
         glVertex3f(f[0],f[1],f[2]);
 
         glEnd();
+    }
+
+    public Body getBomb_body() {
+        return bomb_body;
+    }
+
+    public void setBomb_body(Body bomb_body) {
+        this.bomb_body = bomb_body;
     }
 }

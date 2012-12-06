@@ -2,14 +2,12 @@ package main;
 
 import jinngine.collision.SAP2;
 import jinngine.geometry.Box;
-import jinngine.math.Matrix3;
 import jinngine.math.Vector3;
 import jinngine.physics.Body;
 import jinngine.physics.ContactTrigger;
 import jinngine.physics.DefaultDeactivationPolicy;
 import jinngine.physics.DefaultScene;
 import jinngine.physics.constraint.contact.ContactConstraint;
-import jinngine.physics.force.Force;
 import jinngine.physics.force.GravityForce;
 import jinngine.physics.solver.NonsmoothNonlinearConjugateGradient;
 import models.*;
@@ -30,16 +28,14 @@ public class Main {
     private MainCamera camera;
     private Terrain terrain;
     private UserObject user;
-    private UserObject bomb;
     private jinngine.physics.Scene scene;
     private jinngine.physics.Body box;
-    private  Body currBomb;
     private ArrayList<House> houses = new ArrayList<House>();
     private ArrayList<Zombie> zombies = new ArrayList<Zombie>();
-    private Force gravity;
-    private Matrix3 inertia;
-    private Matrix3 inverse;
-    private boolean bombReleased = false;
+    private ArrayList<Bomb> bombs = new ArrayList<Bomb>();
+
+    private long bombTimer;
+    private  int bombThrowingSpeed = maxBombThrowingSpeed;
 
     public static void main(String[] args) {
         Main main = new Main();
@@ -64,6 +60,7 @@ public class Main {
 //            Mouse.setGrabbed(true);
 
             long FPSSync = System.currentTimeMillis();
+            bombTimer = System.currentTimeMillis();
             while (!Keyboard.isKeyDown(exitKey) && !Display.isCloseRequested()) {
                 long currSync = System.currentTimeMillis();
 
@@ -99,21 +96,38 @@ public class Main {
     }
 
     private void addZombie() {
-        Zombie zombie = new Zombie();
-        zombie.scale(0.3f, 0.3f, 0.3f);
-        zombie.translate((float) Math.random() * mainRoadWidth, 0, user.getPosition().z - 10);
-        if (zombies.size() < 10)
+
+        if (zombies.size() < 10) {
+
+            Zombie zombie = new Zombie(new Body(Integer.toString(zombies.size()), new Box(0.3, 0.3, 0.3)));
+            zombie.scale(0.3f, 0.3f, 0.3f);
+
+            float zombieX = (float) Math.random() * mainRoadWidth;
+            float zombieZ = (float) Math.random() * 5;
+
+            zombieX += (minHouseWidth*1.5f);
+
+            zombieX = Math.min(zombieX, mainRoadWidth - (minHouseWidth * 1.5f));
+
+
+            zombie.getZombie_body().setPosition(new Vector3(zombieX, 0.3, user.getPosition().z - 13 - zombieZ));
+
+            scene.addForce(new GravityForce(zombie.getZombie_body()));
+            scene.addBody(zombie.getZombie_body());
+
             zombies.add(zombie);
+        }
 
         for(Zombie z: zombies) {
-            z.translate(0,0,0.01f);
+            z.getZombie_body().setPosition(new Vector3(z.getZombie_body().getPosition().x, z.getZombie_body().getPosition().y, z.getZombie_body().getPosition().z+0.01));
         }
         removeUnseenZombies();
     }
 
     private void removeUnseenZombies(){
         for (int i = 0; i < zombies.size(); i++) {
-            if (zombies.get(i).getPosition().z > user.getPosition().z+7) {
+            if (zombies.get(i).getZombie_body().getPosition().z > user.getPosition().z+7) {
+                scene.removeBody(zombies.get(i).getZombie_body());
                 zombies.remove(i);
                 i--;
             }
@@ -129,9 +143,10 @@ public class Main {
         camera.render3D();
         terrain.render3D();
         user.render3D();
-//        if (bombReleased) {
-        bomb.render3D();
-//        }
+
+        for (Bomb bomb : bombs) {
+            bomb.render3D();
+        }
         for(House house: houses) {
             house.render3D();
         }
@@ -144,7 +159,14 @@ public class Main {
     private void applyPhysics() {
         scene.tick();
         user.setPosition((float) box.getPosition().x, (float) box.getPosition().y, (float) box.getPosition().z);
-        bomb.setPosition((float) currBomb.getPosition().x, (float) currBomb.getPosition().y, (float) currBomb.getPosition().z);
+
+        for (Bomb bomb : bombs) {
+            bomb.setPosition((float) bomb.getBomb_body().getPosition().x, (float) bomb.getBomb_body().getPosition().y, (float) bomb.getBomb_body().getPosition().z);
+        }
+
+        for (Zombie zombie : zombies) {
+            zombie.setPosition((float) zombie.getZombie_body().getPosition().x, (float) zombie.getZombie_body().getPosition().y, (float) zombie.getZombie_body().getPosition().z);
+        }
     }
 
     private void initializeObjects() {
@@ -193,11 +215,11 @@ public class Main {
         }
 
         Body leftHouses = new Body("leftHouses", new Box(20, minimalHouseHeight, 1000));
-        leftHouses.setPosition(new Vector3(0 - 8, 0, 0));
+        leftHouses.setPosition(new Vector3(0 - 9, 0, 0));
         leftHouses.setFixed(true);
 
         Body rightHouses = new Body("rightHouses", new Box(20, minimalHouseHeight, 1000));
-        rightHouses.setPosition(new Vector3(mainRoadWidth + 8, 0, 0));
+        rightHouses.setPosition(new Vector3(mainRoadWidth + 9, 0, 0));
         rightHouses.setFixed(true);
 
         Body floor = new Body("floor", new Box(1000, 5, 1000));
@@ -224,15 +246,9 @@ public class Main {
         user.scale(0.3f, 0.3f, 0.4f);
         user.translate(5.0f, 1.0f, 0.0f);
 
-        bomb = new UserObject();
-        bomb.scale(0.1f, 0.1f, 0.1f);
-        bomb.translate(5.0f, 1.0f, 0.0f);
-
         box = new Body("box", new Box(0.3f, 0.3f, 0.3f));
         box.setPosition(new Vector3(5.0f, 1.0f, 0.0f));
         box.setFixed(true);
-
-        currBomb = box;
 
         // add all to scene
         scene.addBody(floor);
@@ -334,16 +350,34 @@ public class Main {
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-            currBomb = null;
-            Body new_bomb = new Body("bomb", new Box(0.1f, 0.1f, 0.1f));
-            scene.addBody(new_bomb);
 
-            currBomb = new_bomb;
+            if (bombs.size() > 500) {
+                for (Bomb b : bombs) {
+                    scene.removeBody(b.getBomb_body());
+                }
+                bombs.clear();
+            }
 
-            scene.addTrigger(new ContactTrigger(currBomb, 0.000001, new ContactTrigger.Callback() {
+            if ((System.currentTimeMillis() - bombTimer) <= (1000/bombThrowingSpeed)) {
+                return;
+            }
+            bombTimer = System.currentTimeMillis();
+
+            Bomb bomb = new Bomb(new Body(Integer.toString(bombs.size()), new Box(0.1, 0.1, 0.1)));
+            bomb.scale(0.1f, 0.1f, 0.1f);
+            bomb.translate(5.0f, 1.0f, 0.0f);
+
+            scene.addTrigger(new ContactTrigger(bomb.getBomb_body(), 0.000001, new ContactTrigger.Callback() {
                 @Override
                 public void contactAboveThreshold(jinngine.physics.Body body, ContactConstraint contactConstraint) {
-                    System.out.println("In contact with " + body);
+
+                    for (Zombie z : zombies) {
+                        if (z.getZombie_body().identifier.equals(body.identifier)) {
+                            scene.removeBody(z.getZombie_body());
+                            zombies.remove(z);
+                            break;
+                        }
+                    }
                 }
 
                 @Override
@@ -352,9 +386,10 @@ public class Main {
                 }
             }));
 
-            scene.addForce(new GravityForce(new_bomb));
-            new_bomb.setPosition(new Vector3(box.getPosition().x,box.getPosition().y-0.3, box.getPosition().z));
-            bombReleased = true;
+            scene.addForce(new GravityForce(bomb.getBomb_body()));
+            scene.addBody(bomb.getBomb_body());
+            bomb.getBomb_body().setPosition(new Vector3(box.getPosition().x,box.getPosition().y-0.3, box.getPosition().z));
+            bombs.add(bomb);
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_A)) {}

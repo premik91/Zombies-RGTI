@@ -9,13 +9,17 @@ public class Settings {
     public static final int changeWindowModeKey = Keyboard.KEY_F1;
     public static final String windowTitle = "Zombies fuck you";
     public static boolean fullScreen = true;
-    public static final int windowWidth = 1024;
-    public static final int windowHeight = 768;
+    public static final int windowWidth = 1280;
+    public static final int windowHeight = 800;
 
     // User object settings
     public static final String userObjectModel = "objects/userModel.obj";
     public static final int userObjectMaxHealth = 20;
     public static final int userObjectSpeed = 1;
+
+    // Bomb settings
+    public static final int bombMaxPower = 1;
+    public static final int maxBombThrowingSpeed = 2;
 
     // Other living objects (zombies, not zombies) settings
     public static final String zombieObjectModel = "objects/zombieModel.obj";
