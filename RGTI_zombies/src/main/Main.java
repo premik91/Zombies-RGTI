@@ -351,7 +351,7 @@ public class Main {
                 user.translate(0f, 0f, -10.0f);
                 camera.translate(0f, 0f, -user.getPosition().z + distanceBetweenCameraAndUser);
                 box.setPosition(user.getPosition().x,user.getPosition().y,user.getPosition().z);
-
+                zombies.clear();
             }
 
         }
