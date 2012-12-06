@@ -22,7 +22,6 @@ import org.lwjgl.util.glu.GLU;
 
 import java.util.ArrayList;
 
-import static java.lang.Thread.sleep;
 import static main.Settings.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -103,11 +102,20 @@ public class Main {
         Zombie zombie = new Zombie();
         zombie.scale(0.3f, 0.3f, 0.3f);
         zombie.translate((float) Math.random() * mainRoadWidth, 0, user.getPosition().z - 10);
-        zombies.add(zombie);
+        if (zombies.size() < 10)
+            zombies.add(zombie);
+
         for(Zombie z: zombies) {
-            z.translate(0,0,0.1f);
-            if(z.getPosition().z > user.getPosition().z) {
-                zombies.remove(z);
+            z.translate(0,0,0.01f);
+        }
+        removeUnseenZombies();
+    }
+
+    private void removeUnseenZombies(){
+        for (int i = 0; i < zombies.size(); i++) {
+            if (zombies.get(i).getPosition().z > user.getPosition().z+7) {
+                zombies.remove(i);
+                i--;
             }
         }
     }
@@ -145,7 +153,7 @@ public class Main {
         scene.setTimestep(0.01);
 
         camera = new MainCamera();
-        camera.translate(-5.0f, -2.0f, -7.0f);
+        camera.translate(-5.0f, -2.0f, -9.0f);
 
         terrain = new Terrain();
         terrain.scale(50.0f, 1000.0f, 1000.0f);
@@ -213,7 +221,7 @@ public class Main {
         right.setFixed(true);
 
         user = new UserObject();
-        user.scale(0.3f, 0.3f, 0.3f);
+        user.scale(0.3f, 0.3f, 0.4f);
         user.translate(5.0f, 1.0f, 0.0f);
 
         bomb = new UserObject();
