@@ -20,13 +20,13 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
 
 import java.util.ArrayList;
 
 import static main.Settings.*;
+import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
 
@@ -100,8 +100,8 @@ public class Main {
     }
 
     private void resetDisplay() {
-        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        GL11.glClearColor(1, 1, 1, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor(1, 1, 1, 1);
     }
 
     private void render() {
@@ -237,16 +237,18 @@ public class Main {
         ReSizeGLScene(windowWidth, windowHeight);
 
         // Initialize Our Newly Created GL Window
+        // Enable Texture Loading
+        glEnable(GL_TEXTURE_2D);
         // Enable Smooth Shading
-        GL11.glShadeModel(GL11.GL_SMOOTH);
+        glShadeModel(GL_SMOOTH);
         // Depth Buffer Setup
-        GL11.glClearDepth(1.0f);
+        glClearDepth(1.0f);
         // Enables Depth Testing
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
         // The Type Of Depth Testing To Do
-        GL11.glDepthFunc(GL11.GL_LEQUAL);
+        glDepthFunc(GL_LEQUAL);
         // Really Nice Perspective Calculations
-        GL11.glHint(GL11.GL_PERSPECTIVE_CORRECTION_HINT, GL11.GL_NICEST);
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
         return true;
     }
 
@@ -255,20 +257,20 @@ public class Main {
             windowHeight = 1;
         }
         // Reset The Current Viewport
-        GL11.glViewport(0, 0, windowWidth, windowHeight);
+        glViewport(0, 0, windowWidth, windowHeight);
 
         // Select The Projection Matrix
-        GL11.glMatrixMode(GL11.GL_PROJECTION);
+        glMatrixMode(GL_PROJECTION);
         // Reset The Projection Matrix
-        GL11.glLoadIdentity();
+        glLoadIdentity();
 
         // Calculate The Aspect Ratio Of The Window
         GLU.gluPerspective(45.0f, (float) windowWidth / (float) windowHeight, 0.1f, 100.0f);
 
         // Select The Modelview Matrix
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
+        glMatrixMode(GL_MODELVIEW);
         // Reset The Modelview Matrix
-        GL11.glLoadIdentity();
+        glLoadIdentity();
     }
 
     protected void processInput() {
