@@ -33,5 +33,5 @@ public class Settings {
     public static final int minimalHouseLength = 4;
     public static final int mainRoadWidth = 12;
     public static final int minHouseWidth = 1;
-    public static final int spaceBetweenHouses = 4;
+    public static final int spaceBetweenHouses = 1;
 }

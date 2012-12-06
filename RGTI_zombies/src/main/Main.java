@@ -147,6 +147,7 @@ public class Main {
                     (float) Math.floor(Math.random() * houseLengthBounds + minimalHouseLength)
             };
             // position house
+            positionLeft[2] -= width[2];
             house.scale(width[0], width[1], width[2]);
             house.translate(-positionLeft[0], positionLeft[1], positionLeft[2]);
             houses.add(house);
@@ -160,6 +161,7 @@ public class Main {
                     (float) Math.random() * houseLengthBounds + minimalHouseLength
             };
             // position house
+            positionRight[2] -= width[2];
             house.scale(width[0], width[1], width[2]);
             house.translate(positionRight[0] + mainRoadWidth, positionRight[1], positionRight[2]);
             houses.add(house);
