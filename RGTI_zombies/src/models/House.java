@@ -42,15 +42,11 @@ public class House extends Model3D {
     public void render() {
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glColor4f(rgb[0], rgb[1], rgb[2], 1.0f);
+
         glVertex3f(h[0],h[1],h[2]);
         glVertex3f(g[0],g[1],g[2]);
         glVertex3f(c[0],c[1],c[2]);
         glVertex3f(d[0],d[1],d[2]);
-
-        glVertex3f(b[0],b[1],b[2]);
-        glVertex3f(a[0],a[1],a[2]);
-        glVertex3f(e[0],e[1],e[2]);
-        glVertex3f(f[0],f[1],f[2]);
 
         glVertex3f(d[0],d[1],d[2]);
         glVertex3f(c[0],c[1],c[2]);
