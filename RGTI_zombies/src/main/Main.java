@@ -12,10 +12,7 @@ import jinngine.physics.constraint.contact.ContactConstraint;
 import jinngine.physics.force.Force;
 import jinngine.physics.force.GravityForce;
 import jinngine.physics.solver.NonsmoothNonlinearConjugateGradient;
-import models.House;
-import models.MainCamera;
-import models.Terrain;
-import models.UserObject;
+import models.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
@@ -25,6 +22,7 @@ import org.lwjgl.util.glu.GLU;
 
 import java.util.ArrayList;
 
+import static java.lang.Thread.sleep;
 import static main.Settings.*;
 import static org.lwjgl.opengl.GL11.*;
 
@@ -38,6 +36,7 @@ public class Main {
     private jinngine.physics.Body box;
     private  Body currBomb;
     private ArrayList<House> houses = new ArrayList<House>();
+    private ArrayList<Zombie> zombies = new ArrayList<Zombie>();
     private Force gravity;
     private Matrix3 inertia;
     private Matrix3 inverse;
@@ -89,6 +88,7 @@ public class Main {
                     fullScreen = !fullScreen;
                     Display.setFullscreen(fullScreen);
                 }
+                addZombie();
                 Display.update();
             }
         } catch (Exception e) {
@@ -97,6 +97,19 @@ public class Main {
             Display.destroy();
         }
         System.exit(0);
+    }
+
+    private void addZombie() {
+        Zombie zombie = new Zombie();
+        zombie.scale(0.3f, 0.3f, 0.3f);
+        zombie.translate((float) Math.random() * mainRoadWidth, 0, user.getPosition().z - 10);
+        zombies.add(zombie);
+        for(Zombie z: zombies) {
+            z.translate(0,0,0.1f);
+            if(z.getPosition().z > user.getPosition().z) {
+                zombies.remove(z);
+            }
+        }
     }
 
     private void resetDisplay() {
@@ -113,6 +126,9 @@ public class Main {
 //        }
         for(House house: houses) {
             house.render3D();
+        }
+        for(Zombie zombie: zombies) {
+            zombie.render3D();
         }
         //System.out.printf("%f, %f, %f\n",camera.getPosition().x, camera.getPosition().y, camera.getPosition().z);
     }
