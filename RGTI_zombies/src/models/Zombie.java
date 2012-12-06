@@ -17,19 +17,19 @@ public class Zombie extends Model3D {
     float[] g = {-1.0f, 1.0f, -1.0f};
     float[] h = {1.0f, 1.0f, -1.0f};
 
-    Body zombie_body;
+    Body zombieBody;
     int zombieCurrentHealth = zombieObjectHealth;
 
-    public Zombie(Body zombie_body) {
-        this.zombie_body = zombie_body;
+    public Zombie(Body zombieBody) {
+        this.zombieBody = zombieBody;
     }
 
-    public Body getZombie_body() {
-        return zombie_body;
+    public Body getZombieBody() {
+        return zombieBody;
     }
 
-    public void setZombie_body(Body zombie_body) {
-        this.zombie_body = zombie_body;
+    public void setZombie_body(Body zombieBody) {
+        this.zombieBody = zombieBody;
     }
 
     public int getZombieCurrentHealth() {

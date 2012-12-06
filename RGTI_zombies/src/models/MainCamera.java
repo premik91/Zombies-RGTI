@@ -12,7 +12,7 @@ public class MainCamera extends Model3D
     {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        GLU.gluPerspective(45, Settings.windowWidth / (float) Settings.windowHeight, 1.0f, 30.0f);
+        GLU.gluPerspective(45, Settings.windowWidth / (float) Settings.windowHeight, 1.0f, 100.0f);
     }
 
     @Override

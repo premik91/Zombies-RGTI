@@ -2,7 +2,6 @@ package models;
 
 import jinngine.physics.Body;
 
-import static main.Settings.bombMaxPower;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
@@ -14,8 +13,7 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class Bomb extends Model3D {
 
-    Body bomb_body;
-    int bombPower = bombMaxPower;
+    Body bombBody;
 
     float[] a = {-1.0f, -1.0f, 1.0f};
     float[] b = {1.0f, -1.0f, 1.0f};
@@ -27,16 +25,8 @@ public class Bomb extends Model3D {
     float[] g = {-1.0f, 1.0f, -1.0f};
     float[] h = {1.0f, 1.0f, -1.0f};
 
-    public Bomb(Body bomb_body) {
-        this.bomb_body = bomb_body;
-    }
-
-    public int getBombPower() {
-        return bombPower;
-    }
-
-    public void setBombPower(int bombPower) {
-        this.bombPower = bombPower;
+    public Bomb(Body bombBody) {
+        this.bombBody = bombBody;
     }
 
     @Override
@@ -77,11 +67,11 @@ public class Bomb extends Model3D {
         glEnd();
     }
 
-    public Body getBomb_body() {
-        return bomb_body;
+    public Body getBombBody() {
+        return bombBody;
     }
 
-    public void setBomb_body(Body bomb_body) {
-        this.bomb_body = bomb_body;
+    public void setBomb_body(Body bombBody) {
+        this.bombBody = bombBody;
     }
 }
