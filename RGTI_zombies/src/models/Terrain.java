@@ -30,7 +30,7 @@ public class Terrain extends Model3D {
 
         if (text != null) {
             glBindTexture(GL_TEXTURE_2D, text.getTextureID());
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
         }
 

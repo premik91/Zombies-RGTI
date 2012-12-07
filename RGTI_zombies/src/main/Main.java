@@ -177,26 +177,30 @@ public class Main {
     }
 
     private void applyPhysics() {
-        scene.tick();
-        user.setPosition(
-                (float) box.getPosition().x,
-                (float) box.getPosition().y,
-                (float) box.getPosition().z
-        );
-
-        for (Bomb bomb : bombs) {
-            bomb.setPosition(
-                    (float) bomb.getBody().getPosition().x,
-                    (float) bomb.getBody().getPosition().y,
-                    (float) bomb.getBody().getPosition().z
+        try {
+            scene.tick();
+            user.setPosition(
+                    (float) box.getPosition().x,
+                    (float) box.getPosition().y,
+                    (float) box.getPosition().z
             );
-        }
 
-        for (Zombie zombie : liveZombies) {
-            zombie.setPosition(
-                    (float) zombie.getBody().getPosition().x,
-                    (float) zombie.getBody().getPosition().y,
-                    (float) zombie.getBody().getPosition().z);
+            for (Bomb bomb : bombs) {
+                bomb.setPosition(
+                        (float) bomb.getBody().getPosition().x,
+                        (float) bomb.getBody().getPosition().y,
+                        (float) bomb.getBody().getPosition().z
+                );
+            }
+
+            for (Zombie zombie : liveZombies) {
+                zombie.setPosition(
+                        (float) zombie.getBody().getPosition().x,
+                        (float) zombie.getBody().getPosition().y,
+                        (float) zombie.getBody().getPosition().z);
+            }
+        } catch (Exception e) {
+            System.err.print("ConcurrentModificationException");
         }
     }
 
@@ -433,16 +437,3 @@ public class Main {
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {}
     }
 }
-//        try {
-//            // load texture from PNG file
-//            houseTextures[0] = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("/Users/premik91/Dropbox/fri/3.letnik/RGTI/Zombies(RGTI)/RGTI_zombies/textures/NeHe.png"));
-//
-//            System.out.println("Texture loaded: "+houseTextures[0]);
-//            System.out.println(">> Image width: "+houseTextures[0].getImageWidth());
-//            System.out.println(">> Image height: "+houseTextures[0].getImageHeight());
-//            System.out.println(">> Texture width: "+houseTextures[0].getTextureWidth());
-//            System.out.println(">> Texture height: "+houseTextures[0].getTextureHeight());
-//            System.out.println(">> Texture ID: "+houseTextures[0].getTextureID());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
