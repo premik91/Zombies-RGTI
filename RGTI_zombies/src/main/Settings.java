@@ -1,7 +1,7 @@
 package main;
 
+import org.lwjgl.examples.spaceinvaders.Texture;
 import org.lwjgl.input.Keyboard;
-import org.newdawn.slick.opengl.Texture;
 
 public class Settings {
     // Main game settings

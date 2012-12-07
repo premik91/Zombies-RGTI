@@ -171,6 +171,7 @@ public class Main {
         for(DeadZombie zombie: deadZombies) {
             zombie.render3D();
         }
+
     }
 
     private void applyPhysics() {
@@ -308,9 +309,6 @@ public class Main {
         Display.setTitle(windowTitle);
         ReSizeGLScene(windowWidth, windowHeight);
 
-        // Initialize Our Newly Created GL Window
-        // Enable Texture Loading
-        glEnable(GL_TEXTURE_2D);
         // Enable Smooth Shading
         glShadeModel(GL_SMOOTH);
         // Depth Buffer Setup
@@ -347,13 +345,13 @@ public class Main {
 
     protected void processInput() {
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) && (user.getPosition().x > (minHouseWidth*1.5f))) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)/* && (user.getPosition().x > (minHouseWidth*1.5f))*/) {
             user.translate(-0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.1f, 0.0f, 0.0f);
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) && user.getPosition().x < (mainRoadWidth - (minHouseWidth * 1.5f))) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) /*&& user.getPosition().x < (mainRoadWidth - (minHouseWidth * 1.5f))*/) {
             user.translate(0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(-0.1f, 0.0f, 0.0f);
@@ -375,19 +373,19 @@ public class Main {
             }
 
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && (user.getPosition().z < -10)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) /*&& (user.getPosition().z < -10)*/) {
             user.translate(0.0f, 0.0f, 0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.0f, 0.0f, -0.1f);
         }
 
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_X)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_X) && !Keyboard.isKeyDown(Keyboard.KEY_Z)) {
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y + 0.05, user.getPosition().z));
             camera.translate(0.0f, -0.05f, -0.1f);
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_Z) && user.getPosition().y >= 0.5f) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_Z) && user.getPosition().y >= 0.5f && !Keyboard.isKeyDown(Keyboard.KEY_X)) {
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y - 0.05, user.getPosition().z));
             camera.translate(0.0f, 0.05f, 0.1f);
         }
