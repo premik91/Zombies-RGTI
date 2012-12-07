@@ -30,9 +30,10 @@ public class Main {
     private UserObject user;
     private jinngine.physics.Scene scene;
     private jinngine.physics.Body box;
-
     private ArrayList<House> houses = new ArrayList<House>();
-    private ArrayList<Zombie> zombies = new ArrayList<Zombie>();
+    private ArrayList<Zombie> liveZombies = new ArrayList<Zombie>();
+    private ArrayList<DeadZombie> deadZombies = new ArrayList<DeadZombie>();
+
     private ArrayList<Bomb> bombs = new ArrayList<Bomb>();
 
     private long bombTimer = System.currentTimeMillis();
@@ -100,13 +101,12 @@ public class Main {
     }
 
     private void addZombie() {
-
         if (System.currentTimeMillis() - zombieIncreaseTimer >= zombieIncreaseInterval) {
             numberOfZombiesAtOnce += 5;
             zombieIncreaseTimer = System.currentTimeMillis();
         }
 
-        if (zombies.size() < numberOfZombiesAtOnce) {
+        if (liveZombies.size() < numberOfZombiesAtOnce) {
             zombieID = zombieID == Integer.MAX_VALUE ? 0 : zombieID+1;
             Zombie zombie = new Zombie(new Body(Integer.toString(zombieID), new Box(0.5, 0.5, 0.5)));
             zombie.scale(0.3f, 0.3f, 0.3f);
@@ -126,10 +126,10 @@ public class Main {
             scene.addForce(new GravityForce(zombie.getBody()));
             scene.addBody(zombie.getBody());
 
-            zombies.add(zombie);
+            liveZombies.add(zombie);
         }
 
-        for(Zombie z: zombies) {
+        for(Zombie z: liveZombies) {
             z.getBody().setPosition(new Vector3(
                     z.getBody().getPosition().x,
                     z.getBody().getPosition().y,
@@ -140,10 +140,10 @@ public class Main {
     }
 
     private void removeUnseenZombies(){
-        for (int i = 0; i < zombies.size(); i++) {
-            if (zombies.get(i).getBody().getPosition().z > user.getPosition().z+15) {
-                scene.removeBody(zombies.get(i).getBody());
-                zombies.remove(i--);
+        for (int i = 0; i < liveZombies.size(); i++) {
+            if (liveZombies.get(i).getBody().getPosition().z > user.getPosition().z+15) {
+                scene.removeBody(liveZombies.get(i).getBody());
+                liveZombies.remove(i--);
                 numberOfZombiesEscaped++;
             }
         }
@@ -151,7 +151,7 @@ public class Main {
 
     private void resetDisplay() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClearColor(1, 1, 1, 1);
+        glClearColor(0, 1, 1, 1);
     }
 
     private void render() {
@@ -165,7 +165,10 @@ public class Main {
         for(House house: houses) {
             house.render3D();
         }
-        for(Zombie zombie: zombies) {
+        for(Zombie zombie: liveZombies) {
+            zombie.render3D();
+        }
+        for(DeadZombie zombie: deadZombies) {
             zombie.render3D();
         }
     }
@@ -186,7 +189,7 @@ public class Main {
             );
         }
 
-        for (Zombie zombie : zombies) {
+        for (Zombie zombie : liveZombies) {
             zombie.setPosition(
                     (float) zombie.getBody().getPosition().x,
                     (float) zombie.getBody().getPosition().y,
@@ -195,19 +198,6 @@ public class Main {
     }
 
     private void initializeObjects() {
-//        try {
-//            // load texture from PNG file
-//            houseTextures[0] = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("/Users/premik91/Dropbox/fri/3.letnik/RGTI/Zombies(RGTI)/RGTI_zombies/textures/NeHe.png"));
-//
-//            System.out.println("Texture loaded: "+houseTextures[0]);
-//            System.out.println(">> Image width: "+houseTextures[0].getImageWidth());
-//            System.out.println(">> Image height: "+houseTextures[0].getImageHeight());
-//            System.out.println(">> Texture width: "+houseTextures[0].getTextureWidth());
-//            System.out.println(">> Texture height: "+houseTextures[0].getTextureHeight());
-//            System.out.println(">> Texture ID: "+houseTextures[0].getTextureID());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
         scene = new DefaultScene(new SAP2(), new NonsmoothNonlinearConjugateGradient(44), new DefaultDeactivationPolicy());
 
         scene.setTimestep(0.01);
@@ -216,44 +206,13 @@ public class Main {
         terrain.scale(50.0f, 1000.0f, 1000.0f);
         terrain.translate(0.0f, -0.5f, 0.0f);
 
-        float[] positionLeft = {0, 0, 0}, positionRight = {mainRoadWidth, 0, 0};
-        float[] width;
-        House house;
-        for (int i = 0; i < 200; i++) {
-            // LEFT HOUSE
-            house = new House(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()});
-            width = new float[]{
-                    minHouseWidth,
-                    (float) Math.random() * houseHeightBounds + minimalHouseHeight,
-                    (float) Math.random() * houseLengthBounds + minimalHouseLength
-            };
-            // position house
-            positionLeft[2] -= width[2];
-            house.scale(width[0], width[1], width[2]);
-            house.translate(-positionLeft[0], positionLeft[1], positionLeft[2]);
-            houses.add(house);
-            positionLeft[2] -= width[2] + spaceBetweenHouses;
+        float positionHousesZ = initializeHouses();
 
-            // RIGHT HOUSE
-            house = new House(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()});
-            width = new float[]{
-                    minHouseWidth,
-                    (float) Math.random() * houseHeightBounds + minimalHouseHeight,
-                    (float) Math.random() * houseLengthBounds + minimalHouseLength
-            };
-            // position house
-            positionRight[2] -= width[2];
-            house.scale(width[0], width[1], width[2]);
-            house.translate(positionRight[0], positionRight[1], positionRight[2]);
-            houses.add(house);
-            positionRight[2] -= width[2] + spaceBetweenHouses;
-        }
-
-        Body leftHouses = new Body("leftHouses", new Box(20, minimalHouseHeight, -positionLeft[2]));
+        Body leftHouses = new Body("leftHouses", new Box(20, minimalHouseHeight, -positionHousesZ));
         leftHouses.setPosition(new Vector3(0 - 9, 0, 0));
         leftHouses.setFixed(true);
 
-        Body rightHouses = new Body("rightHouses", new Box(20, minimalHouseHeight, -positionRight[2]));
+        Body rightHouses = new Body("rightHouses", new Box(20, minimalHouseHeight, -positionHousesZ));
         rightHouses.setPosition(new Vector3(mainRoadWidth + 9, 0, 0));
         rightHouses.setFixed(true);
 
@@ -297,6 +256,42 @@ public class Main {
         scene.addBody(leftHouses);
         scene.addBody(rightHouses);
         scene.addBody(box);
+    }
+
+    private float initializeHouses() {
+        float[] positionLeft = {0, 0, 0}, positionRight = {mainRoadWidth, 0, 0};
+        float[] width;
+        House house;
+        for (int i = 0; i < 200; i++) {
+            // LEFT HOUSE
+            house = new House(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()});
+            width = new float[]{
+                    minHouseWidth,
+                    (float) Math.random() * houseHeightBounds + minimalHouseHeight,
+                    (float) Math.random() * houseLengthBounds + minimalHouseLength
+            };
+            // position house
+            positionLeft[2] -= width[2];
+            house.scale(width[0], width[1], width[2]);
+            house.translate(-positionLeft[0], positionLeft[1], positionLeft[2]);
+            houses.add(house);
+            positionLeft[2] -= width[2] + spaceBetweenHouses;
+
+            // RIGHT HOUSE
+            house = new House(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()});
+            width = new float[]{
+                    minHouseWidth,
+                    (float) Math.random() * houseHeightBounds + minimalHouseHeight,
+                    (float) Math.random() * houseLengthBounds + minimalHouseLength
+            };
+            // position house
+            positionRight[2] -= width[2];
+            house.scale(width[0], width[1], width[2]);
+            house.translate(positionRight[0], positionRight[1], positionRight[2]);
+            houses.add(house);
+            positionRight[2] -= width[2] + spaceBetweenHouses;
+        }
+        return Math.max(positionLeft[2], positionRight[2]);
     }
 
     private boolean CreateGLWindow(String windowTitle, int windowWidth, int windowHeight, boolean fullScreen) throws LWJGLException {
@@ -376,7 +371,7 @@ public class Main {
                 user.translate(0f, 0f, -10.0f);
                 camera.translate(0f, 0f, -user.getPosition().z + distanceBetweenCameraAndUser);
                 box.setPosition(user.getPosition().x,user.getPosition().y,user.getPosition().z);
-                zombies.clear();
+                liveZombies.clear();
             }
 
         }
@@ -404,7 +399,7 @@ public class Main {
                 bombs.remove(0);
             }
 
-            if ((System.currentTimeMillis() - bombTimer) <= (1000/maxBombThrowingSpeed)) {
+            if ((System.currentTimeMillis() - bombTimer) <= 1000 / maxBombThrowingSpeed) {
                 return;
             }
             bombTimer = System.currentTimeMillis();
@@ -417,12 +412,18 @@ public class Main {
                 @Override
                 public void contactAboveThreshold(jinngine.physics.Body body, ContactConstraint contactConstraint) {
 
-                    for (Zombie z : zombies) {
+                    for (Zombie z : liveZombies) {
                         if (z.getBody().identifier.equals(body.identifier)) {
                             int currZombieHealth = z.getZombieCurrentHealth() - bombMaxPower;
                             if (currZombieHealth == 0) {
                                 scene.removeBody(z.getBody());
-                                zombies.remove(z);
+                                liveZombies.remove(z);
+
+                                DeadZombie deadZombie = new DeadZombie();
+                                deadZombie.setPosition(z.getPosition().x, terrain.getPosition().y+0.01f, z.getPosition().z);
+                                deadZombie.scale(z.getScale().x, z.getScale().y, z.getScale().z);
+                                deadZombies.add(deadZombie);
+
                                 numberOfZombiesKilled++;
                             } else {
                                 z.setZombieCurrentHealth(currZombieHealth);
@@ -453,3 +454,16 @@ public class Main {
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {}
     }
 }
+//        try {
+//            // load texture from PNG file
+//            houseTextures[0] = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("/Users/premik91/Dropbox/fri/3.letnik/RGTI/Zombies(RGTI)/RGTI_zombies/textures/NeHe.png"));
+//
+//            System.out.println("Texture loaded: "+houseTextures[0]);
+//            System.out.println(">> Image width: "+houseTextures[0].getImageWidth());
+//            System.out.println(">> Image height: "+houseTextures[0].getImageHeight());
+//            System.out.println(">> Texture width: "+houseTextures[0].getTextureWidth());
+//            System.out.println(">> Texture height: "+houseTextures[0].getTextureHeight());
+//            System.out.println(">> Texture ID: "+houseTextures[0].getTextureID());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }

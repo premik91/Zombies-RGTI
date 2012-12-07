@@ -35,7 +35,6 @@ public class Zombie extends Model3D {
     public void render() {
         glBegin(GL_QUADS);
         glColor4f(1.0f, 1.0f, 0, 1.0f);
-
         glVertex3f(h[0],h[1],h[2]);
         glVertex3f(g[0],g[1],g[2]);
         glVertex3f(c[0],c[1],c[2]);

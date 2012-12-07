@@ -1,8 +1,9 @@
 package models;
 
 import jinngine.physics.Body;
-import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
+
+import static org.lwjgl.opengl.GL11.*;
 
 public abstract class Model3D {
 
@@ -16,19 +17,19 @@ public abstract class Model3D {
     protected abstract void render();
 
     public void render3D() {
-        GL11.glMatrixMode(GL11.GL_MODELVIEW);
-        GL11.glPushMatrix();
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
 
-        GL11.glTranslatef(position.x, position.y, position.z);
+        glTranslatef(position.x, position.y, position.z);
 
-        GL11.glRotatef(rotation.z, 0, 0, 1);
-        GL11.glRotatef(rotation.y, 0, 1, 0);
-        GL11.glRotatef(rotation.x, 1, 0, 0);
+        glRotatef(rotation.z, 0, 0, 1);
+        glRotatef(rotation.y, 0, 1, 0);
+        glRotatef(rotation.x, 1, 0, 0);
 
-        GL11.glScalef(scale.x, scale.y, scale.z);
+        glScalef(scale.x, scale.y, scale.z);
 
         render();
-        GL11.glPopMatrix();
+        glPopMatrix();
     }
 
     public Body getBody() {
