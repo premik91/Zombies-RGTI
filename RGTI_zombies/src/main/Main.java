@@ -44,6 +44,8 @@ public class Main {
     private int numberOfZombiesKilled = 0;
     private int numberOfZombiesAtOnce = 1;
 
+    private float lengthOfCity;
+
     public static void main(String[] args) {
         Main main = new Main();
         main.startLoop();
@@ -202,39 +204,11 @@ public class Main {
 
         scene.setTimestep(0.01);
 
+        lengthOfCity = initializeHouses();
+
         terrain = new Terrain();
-        terrain.scale(50.0f, 1000.0f, 1000.0f);
-        terrain.translate(0.0f, -0.5f, 0.0f);
-
-        float positionHousesZ = initializeHouses();
-
-        Body leftHouses = new Body("leftHouses", new Box(20, minimalHouseHeight, -positionHousesZ));
-        leftHouses.setPosition(new Vector3(0 - 9, 0, 0));
-        leftHouses.setFixed(true);
-
-        Body rightHouses = new Body("rightHouses", new Box(20, minimalHouseHeight, -positionHousesZ));
-        rightHouses.setPosition(new Vector3(mainRoadWidth + 9, 0, 0));
-        rightHouses.setFixed(true);
-
-        Body floor = new Body("floor", new Box(1000, 5, 10000));
-        floor.setPosition(new Vector3(0, -3, 0));
-        floor.setFixed(true);
-
-        Body back = new Body("back", new Box(50, 10, 100));
-        back.setPosition(new Vector3(0, 0, -1000));
-        back.setFixed(true);
-
-        Body front = new Body("front", new Box(50, 100, 10));
-        front.setPosition(new Vector3(0, 0, 10000));
-        front.setFixed(true);
-
-        Body left = new Body("left", new Box(10, 100, 1000));
-        left.setPosition(new Vector3(-50, 0, 0));
-        left.setFixed(true);
-
-        Body right = new Body("right", new Box(10, 100, 1000));
-        right.setPosition(new Vector3(50, 0, 0));
-        right.setFixed(true);
+        terrain.scale(mainRoadWidth, 0, lengthOfCity / 2);
+        terrain.translate(0.0f, -0.5f, lengthOfCity / 2);
 
         user = new UserObject();
         user.scale(0.3f, 0.3f, 0.4f);
@@ -247,15 +221,7 @@ public class Main {
         box.setPosition(new Vector3((mainRoadWidth / 2.0f), 1.0f, -10.0f));
         box.setFixed(true);
 
-        // add all to scene
-        scene.addBody(floor);
-        scene.addBody(back);
-        scene.addBody(front);
-        scene.addBody(left);
-        scene.addBody(right);
-        scene.addBody(leftHouses);
-        scene.addBody(rightHouses);
-        scene.addBody(box);
+        addToScene();
     }
 
     private float initializeHouses() {
@@ -291,7 +257,23 @@ public class Main {
             houses.add(house);
             positionRight[2] -= width[2] + spaceBetweenHouses;
         }
-        return Math.max(positionLeft[2], positionRight[2]);
+        return Math.min(positionLeft[2], positionRight[2]);
+    }
+    private void addToScene() {
+        Body leftHouses = new Body("leftHouses", new Box(20, minimalHouseHeight, -lengthOfCity));
+        leftHouses.setPosition(new Vector3(0 - 9, 0, 0));
+        leftHouses.setFixed(true);
+
+        Body rightHouses = new Body("rightHouses", new Box(20, minimalHouseHeight, -lengthOfCity));
+        rightHouses.setPosition(new Vector3(mainRoadWidth + 9, 0, 0));
+        rightHouses.setFixed(true);
+
+        Body floor = new Body("floor", new Box(1000, 5, 10000));
+        floor.setPosition(new Vector3(0, -3, 0));
+        floor.setFixed(true);
+        scene.addBody(floor);
+        scene.addBody(leftHouses);
+        scene.addBody(rightHouses);
     }
 
     private boolean CreateGLWindow(String windowTitle, int windowWidth, int windowHeight, boolean fullScreen) throws LWJGLException {
@@ -364,7 +346,7 @@ public class Main {
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.0f, 0.0f, 0.1f);
 
-            if (user.getPosition().z <= -1000) {
+            if (user.getPosition().z <= lengthOfCity + 30) {
                 float distanceBetweenCameraAndUser = user.getPosition().z + camera.getPosition().z;
                 user.setPosition(user.getPosition().x,user.getPosition().y,0f);
                 camera.setPosition(camera.getPosition().x,camera.getPosition().y,0f);
@@ -417,14 +399,13 @@ public class Main {
                             int currZombieHealth = z.getZombieCurrentHealth() - bombMaxPower;
                             if (currZombieHealth == 0) {
                                 scene.removeBody(z.getBody());
-                                liveZombies.remove(z);
-
                                 DeadZombie deadZombie = new DeadZombie();
-                                deadZombie.setPosition(z.getPosition().x, terrain.getPosition().y+0.01f, z.getPosition().z);
-                                deadZombie.scale(z.getScale().x, z.getScale().y, z.getScale().z);
+                                deadZombie.scale(z.getScale().x * 5, z.getScale().y, z.getScale().z * 5);
+                                deadZombie.setPosition(z.getPosition().x - deadZombie.getScale().x / 2, terrain.getPosition().y + 0.01f, z.getPosition().z);
                                 deadZombies.add(deadZombie);
 
                                 numberOfZombiesKilled++;
+                                liveZombies.remove(z);
                             } else {
                                 z.setZombieCurrentHealth(currZombieHealth);
                             }
