@@ -17,7 +17,11 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.glu.GLU;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import static main.Settings.*;
@@ -110,7 +114,7 @@ public class Main {
 
         if (liveZombies.size() < numberOfZombiesAtOnce) {
             zombieID = zombieID == Integer.MAX_VALUE ? 0 : zombieID+1;
-            Zombie zombie = new Zombie(new Body(Integer.toString(zombieID), new Box(0.5, 0.5, 0.5)));
+            Zombie zombie = new Zombie(new Body("Zombie"+zombieID, new Box(0.5, 0.5, 0.5)));
             zombie.scale(0.3f, 0.3f, 0.3f);
 
             float zombieX = (float) Math.random() * mainRoadWidth;
@@ -211,16 +215,16 @@ public class Main {
 
         lengthOfCity = initializeHouses();
 
-        terrain = new Terrain();
+        terrain = new Terrain(loadTextures("RGTI_zombies/textures/background.png"));
         terrain.scale(mainRoadWidth, 0, lengthOfCity / 2);
         terrain.translate(0.0f, -0.5f, lengthOfCity / 2);
 
         user = new UserObject();
-        user.scale(0.3f, 0.3f, 0.4f);
+        user.scale(0.5f, 0.5f, 0.5f);
         user.translate((mainRoadWidth/2.0f), 1.0f, -10.0f);
 
         camera = new MainCamera();
-        camera.translate(-user.getPosition().x, -user.getPosition().y - 4.0f, -user.getPosition().z - 16.0f);
+        camera.translate(-user.getPosition().x, -user.getPosition().y - 4.0f, -user.getPosition().z - 20.0f);
 
         box = new Body("box", new Box(0.5f, 0.5f, 0.5f));
         box.setPosition(new Vector3((mainRoadWidth / 2.0f), 1.0f, -10.0f));
@@ -233,9 +237,12 @@ public class Main {
         float[] positionLeft = {0, 0, 0}, positionRight = {mainRoadWidth, 0, 0};
         float[] width;
         House house;
+
+        Texture houseTexture = loadTextures("RGTI_zombies/textures/houseWall.png");
+
         for (int i = 0; i < 200; i++) {
             // LEFT HOUSE
-            house = new House(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()});
+            house = new House(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()}, houseTexture);
             width = new float[]{
                     minHouseWidth,
                     (float) Math.random() * houseHeightBounds + minimalHouseHeight,
@@ -249,7 +256,7 @@ public class Main {
             positionLeft[2] -= width[2] + spaceBetweenHouses;
 
             // RIGHT HOUSE
-            house = new House(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()});
+            house = new House(new float[]{(float) Math.random(), (float) Math.random(), (float) Math.random()}, houseTexture);
             width = new float[]{
                     minHouseWidth,
                     (float) Math.random() * houseHeightBounds + minimalHouseHeight,
@@ -297,6 +304,8 @@ public class Main {
 
         // Enable Smooth Shading
         glShadeModel(GL_SMOOTH);
+        // Don't render hidden faces
+        glEnable(GL_CULL_FACE);
         // Depth Buffer Setup
         glClearDepth(1.0f);
         // Enables Depth Testing
@@ -401,6 +410,7 @@ public class Main {
                             int currZombieHealth = z.getZombieCurrentHealth() - bombMaxPower;
                             if (currZombieHealth == 0) {
                                 scene.removeBody(z.getBody());
+
                                 DeadZombie deadZombie = new DeadZombie();
                                 deadZombie.scale(z.getScale().x * 5, z.getScale().y, z.getScale().z * 5);
                                 deadZombie.setPosition(z.getPosition().x - deadZombie.getScale().x / 2, terrain.getPosition().y + 0.01f, z.getPosition().z);
@@ -435,5 +445,15 @@ public class Main {
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) {}
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {}
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {}
+    }
+
+    private Texture loadTextures(String path) {
+        Texture text = null;
+        try {
+            text = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return text;
     }
 }
