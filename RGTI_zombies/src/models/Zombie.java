@@ -17,19 +17,10 @@ public class Zombie extends Model3D {
     float[] g = {-1.0f, 1.0f, -1.0f};
     float[] h = {1.0f, 1.0f, -1.0f};
 
-    Body zombieBody;
-    int zombieCurrentHealth = zombieObjectHealth;
+    private int zombieCurrentHealth = zombieObjectHealth;
 
     public Zombie(Body zombieBody) {
-        this.zombieBody = zombieBody;
-    }
-
-    public Body getZombieBody() {
-        return zombieBody;
-    }
-
-    public void setZombie_body(Body zombieBody) {
-        this.zombieBody = zombieBody;
+        this.body = zombieBody;
     }
 
     public int getZombieCurrentHealth() {
@@ -49,11 +40,6 @@ public class Zombie extends Model3D {
         glVertex3f(g[0],g[1],g[2]);
         glVertex3f(c[0],c[1],c[2]);
         glVertex3f(d[0],d[1],d[2]);
-
-        glVertex3f(b[0],b[1],b[2]);
-        glVertex3f(a[0],a[1],a[2]);
-        glVertex3f(e[0],e[1],e[2]);
-        glVertex3f(f[0],f[1],f[2]);
 
         glVertex3f(d[0],d[1],d[2]);
         glVertex3f(c[0],c[1],c[2]);

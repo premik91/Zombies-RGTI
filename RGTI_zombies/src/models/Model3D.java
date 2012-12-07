@@ -1,5 +1,6 @@
 package models;
 
+import jinngine.physics.Body;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -9,6 +10,8 @@ public abstract class Model3D {
     protected Vector3f rotation = new Vector3f();
 
     protected Vector3f scale = new Vector3f();
+
+    protected Body body;
 
     protected abstract void render();
 
@@ -26,6 +29,14 @@ public abstract class Model3D {
 
         render();
         GL11.glPopMatrix();
+    }
+
+    public Body getBody() {
+        return this.body;
+    }
+
+    public void setBody(Body bombBody) {
+        this.body = bombBody;
     }
 
     public void translate(float x, float y, float z) {
