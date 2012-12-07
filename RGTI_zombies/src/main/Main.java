@@ -103,6 +103,20 @@ public class Main {
         System.exit(0);
     }
 
+    private void drawModel(GLMmodel *pmodel,char*filename,GLuint mode) {
+        if(!pmodel) {
+            pmodel=glmReadOBJ(filename);
+            if(!pmodel)
+                exit(0);
+            glmUnitize(pmodel);
+            //generate facet normal vectors for model
+            glmFacetNormals(pmodel);
+            //generate vertex normal vectors (called after generating facet normals)
+            glmVertexNormals(pmodel,90.0);
+        }
+        glmDraw(pmodel,mode);
+    }
+
     private void addZombie() {
 
         if (System.currentTimeMillis() - zombieIncreaseTimer >= 1000*zombieIncreaseInterval) {
