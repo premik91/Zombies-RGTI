@@ -28,7 +28,6 @@ public class Char extends Model3D {
         glBegin(GL_QUADS);
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-        // TODO: The correct coordinates for char rotation
         glTexCoord2f(0,0);
         glVertex3f(d[0],d[1],d[2]);
 

@@ -170,7 +170,6 @@ public class Main {
 
         if (liveZombies.size() < numberOfZombiesAtOnce) {
             zombieID = (zombieID == Integer.MAX_VALUE) ? 0 : zombieID+1;
-            // TODO: Zombie texture?
             Zombie zombie = new Zombie(
                     new Body("Zombie" + zombieID, new Box(zombieSize * 2, zombieSize * 2, zombieSize * 2)),zombieTexture);
             zombie.scale(zombieSize, zombieSize, zombieSize);
@@ -281,7 +280,6 @@ public class Main {
         terrain.scale(mainRoadWidth / 2, 0, lengthOfCity / 2);
         terrain.translate(mainRoadWidth / 2, -0.5f, lengthOfCity / 2);
 
-        // TODO: Move user higher and camera lower, user object texture?
         user = new UserObject(loadTextures("RGTI_zombies/textures/user.png"));
         user.scale(userSize[0], userSize[1], userSize[2]);
         user.translate(mainRoadWidth / 2.0f, 1.0f, -10.0f);
@@ -465,7 +463,7 @@ public class Main {
                 c.translate(-0.0f, -0.05f, -0.1f);
             }
         }
-        // TODO: something not working with nukes
+
         // Special weapon 1, NUKE
         if(Keyboard.isKeyDown(Keyboard.KEY_N) && maxNukes > 0) {
             specialWeaponNumber = 1;
@@ -490,7 +488,6 @@ public class Main {
                 maxNukes --;
             }
             specialWeaponNumber = 0;
-            // TODO: bomSizeTemp scale and body doesn't work properly and implement Sphere instead of Box
             Bomb bomb = new Bomb(new Body("Bomb" + bombs.size(), new Box(bombSizeTemp, bombSizeTemp, bombSizeTemp)), bombTexture);
             bomb.scale(bombSizeTemp, bombSizeTemp, bombSizeTemp);
             bomb.translate(5.0f, 1.0f, 0.0f);
