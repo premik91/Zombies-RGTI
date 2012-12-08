@@ -33,8 +33,6 @@ public class House extends Model3D {
     float[] g = {-1.0f, 1.0f, -1.0f};
     float[] h = {1.0f, 1.0f, -1.0f};
 
-    Texture texture;
-
     private float[] rgb;
 
     public House(float[] rgb, Texture texture) {
@@ -44,8 +42,6 @@ public class House extends Model3D {
 
     @Override
     public void render() {
-
-
         glEnable(GL_TEXTURE_2D);
         glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE );
 
@@ -56,8 +52,6 @@ public class House extends Model3D {
         }
 
         glBegin(GL_QUADS);
-//        glColor4f(1.0f, 1.0f, 1.0f, 0.0f);
-
         glColor4f(rgb[0], rgb[1], rgb[2], 1.0f);
 
         glTexCoord2f(0,0);
@@ -106,7 +100,6 @@ public class House extends Model3D {
         glVertex3f(f[0],f[1],f[2]);
 
         glEnd();
-
         glDisable(GL_TEXTURE_2D);
     }
 }

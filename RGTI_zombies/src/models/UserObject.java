@@ -1,10 +1,9 @@
 package models;
 
 import org.lwjgl.util.glu.Sphere;
+import org.newdawn.slick.opengl.Texture;
 
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.*;
 
 public class UserObject extends Model3D {
     float[] a = {-1.0f, -1.0f, 1.0f};
@@ -16,6 +15,10 @@ public class UserObject extends Model3D {
     float[] f = {1.0f, -1.0f, -1.0f};
     float[] g = {-1.0f, 1.0f, -1.0f};
     float[] h = {1.0f, 1.0f, -1.0f};
+
+    public UserObject(Texture texture) {
+        this.texture = texture;
+    }
 
     @Override
     public void render() {

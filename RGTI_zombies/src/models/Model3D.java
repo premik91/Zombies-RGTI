@@ -2,6 +2,7 @@ package models;
 
 import jinngine.physics.Body;
 import org.lwjgl.util.vector.Vector3f;
+import org.newdawn.slick.opengl.Texture;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -13,6 +14,7 @@ public abstract class Model3D {
     protected Vector3f scale = new Vector3f();
 
     protected Body body;
+    protected Texture texture = null;
 
     protected abstract void render();
 
@@ -62,5 +64,13 @@ public abstract class Model3D {
 
     public Vector3f getScale() {
         return scale;
+    }
+
+    public Vector3f getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(Vector3f rotation) {
+        this.rotation = rotation;
     }
 }
