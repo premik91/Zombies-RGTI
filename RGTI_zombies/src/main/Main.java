@@ -151,7 +151,7 @@ public class Main {
         glLoadIdentity();
 
         // Calculate The Aspect Ratio Of The Window
-        GLU.gluPerspective(45.0f, (float) windowWidth / (float) windowHeight, 0.1f, 60.0f);
+        GLU.gluPerspective(45.0f, windowWidth / (float) windowHeight, 0.1f, 60.0f);
 
         // Select The Modelview Matrix
         glMatrixMode(GL_MODELVIEW);
@@ -161,7 +161,7 @@ public class Main {
 
     private void addZombie() {
         if (System.currentTimeMillis() - zombieIncreaseTimer >= zombieIncreaseInterval) {
-            numberOfZombiesAtOnce += 5;
+            numberOfZombiesAtOnce += zombieIncreaseSizeInterval;
             zombieIncreaseTimer = System.currentTimeMillis();
         }
 
@@ -304,7 +304,7 @@ public class Main {
         for(char c: Integer.toString(numberOfZombiesKilled).toCharArray()) {
             Char newChar = new Char(textureNumbers[c-48]);
             zombiesHUDKilled.add(newChar);
-            newChar.scale(0.3f, 0.3f, 0.3f);
+            newChar.scale(0.3f, 0.5f, 0.3f);
             newChar.setPosition(position, 11, (float) box.getPosition().z + 2);
             position += 0.5;
         }
@@ -316,7 +316,7 @@ public class Main {
         for(char c: string.toCharArray()) {
             Char newChar = new Char(textureNumbers[c-48]);
             zombiesHUDEscaped.add(newChar);
-            newChar.scale(0.3f, 0.3f, 0.3f);
+            newChar.scale(0.3f, 0.5f, 0.3f);
             newChar.setPosition(position + mainRoadWidth, 11, (float) box.getPosition().z + 2);
             position += 0.5;
         }
