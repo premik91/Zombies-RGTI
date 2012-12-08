@@ -27,28 +27,31 @@ import static main.Utilities.loadTextures;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
-
     private MainCamera camera;
     private Terrain terrain;
     private UserObject user;
     private jinngine.physics.Scene scene;
     private jinngine.physics.Body box;
+
     private ArrayList<House> houses = new ArrayList<House>();
     private ArrayList<Zombie> liveZombies = new ArrayList<Zombie>();
     private ArrayList<DeadZombie> deadZombies = new ArrayList<DeadZombie>();
 
-    private ArrayList<Char> zombiesKilled = new ArrayList<Char>();
+    // HUD
+    private ArrayList<Char> zombiesHUDKilled = new ArrayList<Char>();
+    private ArrayList<Char> zombiesHUDEscaped = new ArrayList<Char>();
+    private Texture[] textureNumbers;
 
+    // Bombs
     private ArrayList<Bomb> bombs = new ArrayList<Bomb>();
-
     private long bombTimer = System.currentTimeMillis();
+
+    // Variables
     private long zombieIncreaseTimer = System.currentTimeMillis();
     private int zombieID = 0;
-
     private int numberOfZombiesEscaped = 0;
     private int numberOfZombiesKilled = 0;
     private int numberOfZombiesAtOnce = 1;
-
     private float lengthOfCity;
     private int specialWeaponNumber = 0;
 
@@ -200,6 +203,7 @@ public class Main {
                 scene.removeBody(liveZombies.get(i).getBody());
                 liveZombies.remove(i--);
                 numberOfZombiesEscaped++;
+                addZombieHUDEscaped();
             }
         }
     }
@@ -226,7 +230,10 @@ public class Main {
         for(DeadZombie zombie: deadZombies) {
             zombie.render3D();
         }
-        for(Char c: zombiesKilled) {
+        for(Char c: zombiesHUDEscaped) {
+            c.render3D();
+        }
+        for(Char c: zombiesHUDKilled) {
             c.render3D();
         }
     }
@@ -281,18 +288,39 @@ public class Main {
         box = new Body("box", new Box(0.5f, 0.5f, 0.5f));
         box.setPosition(new Vector3(mainRoadWidth / 2.0f, 5.0f, -10.0f));
         box.setFixed(true);
+        textureNumbers = new Texture[10];
+        for(int i = 0; i <= 9; i++) {
+            textureNumbers[i] = loadTextures("RGTI_zombies/textures/numbers/"+i+".png");
+        }
+        addZombieHUDKilled();
+        addZombieHUDEscaped();
+        addToScene();
+    }
 
-        // Zombies killed
-        numberOfZombiesKilled = 1234567890;
+    private void addZombieHUDKilled() {
+        zombiesHUDKilled.clear();
         float position = 0.5f;
         for(char c: Integer.toString(numberOfZombiesKilled).toCharArray()) {
-            Char newChar = new Char(loadTextures("RGTI_zombies/textures/numbers/"+c+".png"));
-            zombiesKilled.add(newChar);
-            newChar.scale(0.5f, 0.5f, 0.5f);
-            newChar.translate(position++, 1.0f, -15.0f);
+            Char newChar = new Char(textureNumbers[c-48]);
+            zombiesHUDKilled.add(newChar);
+            newChar.scale(0.3f, 0.3f, 0.3f);
+            newChar.setPosition(position, 11, (float) box.getPosition().z + 2);
+            newChar.setRotation(new Vector3f(0, 0, 90f));
+            position += 0.5;
         }
-
-        addToScene();
+    }
+    private void addZombieHUDEscaped() {
+        zombiesHUDEscaped.clear();
+        String string = Integer.toString(numberOfZombiesEscaped);
+        float position = -string.length() * 0.5f;
+        for(char c: string.toCharArray()) {
+            Char newChar = new Char(textureNumbers[c-48]);
+            zombiesHUDEscaped.add(newChar);
+            newChar.scale(0.3f, 0.3f, 0.3f);
+            newChar.setPosition(position + mainRoadWidth, 11, (float) box.getPosition().z + 2);
+            newChar.setRotation(new Vector3f(0, 0, 90f));
+            position += 0.5;
+        }
     }
 
     private float initializeHouses() {
@@ -391,29 +419,53 @@ public class Main {
                 box.setPosition(user.getPosition().x,user.getPosition().y,user.getPosition().z);
                 liveZombies.clear();
             }
-
+            for(Char c: zombiesHUDEscaped) {
+                c.translate(0.0f, 0.0f, -0.1f);
+            }
+            for(Char c: zombiesHUDKilled) {
+                c.translate(0.0f, 0.0f, -0.1f);
+            }
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && (user.getPosition().z < -10)) {
             user.translate(0.0f, 0.0f, 0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.0f, 0.0f, -0.1f);
+            for(Char c: zombiesHUDEscaped) {
+                c.translate(0.0f, 0.0f, 0.1f);
+            }
+            for(Char c: zombiesHUDKilled) {
+                c.translate(0.0f, 0.0f, 0.1f);
+            }
         }
 
 
         if (Keyboard.isKeyDown(Keyboard.KEY_X) && !Keyboard.isKeyDown(Keyboard.KEY_Z)) {
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y + 0.05, user.getPosition().z));
             camera.translate(0.0f, -0.05f, -0.1f);
+            for(Char c: zombiesHUDEscaped) {
+                c.translate(0.0f, 0.05f, 0.1f);
+            }
+            for(Char c: zombiesHUDKilled) {
+                c.translate(0.0f, 0.05f, 0.1f);
+            }
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_Z) && user.getPosition().y >= 0.5f && !Keyboard.isKeyDown(Keyboard.KEY_X)) {
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y - 0.05, user.getPosition().z));
             camera.translate(0.0f, 0.05f, 0.1f);
+            for(Char c: zombiesHUDEscaped) {
+                c.translate(-0.0f, -0.05f, -0.1f);
+            }
+            for(Char c: zombiesHUDKilled) {
+                c.translate(-0.0f, -0.05f, -0.1f);
+            }
         }
         // TODO: something not working with nukes
         // Special weapon 1, NUKE
-        if(Keyboard.isKeyDown(Keyboard.KEY_1) && maxNukes > 0) {
+        if(Keyboard.isKeyDown(Keyboard.KEY_N) && maxNukes > 0) {
             specialWeaponNumber = 1;
+            System.out.println(specialWeaponNumber);
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
@@ -455,6 +507,7 @@ public class Main {
                                 deadZombies.add(deadZombie);
 
                                 numberOfZombiesKilled++;
+                                addZombieHUDKilled();
                                 liveZombies.remove(z);
                             } else {
                                 z.setZombieHealth(currZombieHealth);
