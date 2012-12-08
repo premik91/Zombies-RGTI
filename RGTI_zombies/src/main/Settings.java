@@ -23,7 +23,7 @@ public class Settings {
     public static final int maxBombThrowingSpeed = 10;
     public static float bombSize = 0.5f;
     // Special weapons in order 0 -> N
-    public static float nukeSize = 5f;
+    public static float nukeSize = 2f;
     public static int maxNukes = 5;
 
     // Other living objects (zombies, not zombies) settings

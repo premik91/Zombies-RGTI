@@ -164,8 +164,7 @@ public class Main {
         }
 
         if (liveZombies.size() < numberOfZombiesAtOnce) {
-            zombieID = zombieID == Integer.MAX_VALUE ? 0 : zombieID++;
-
+            zombieID = (zombieID == Integer.MAX_VALUE) ? 0 : zombieID+1;
             // TODO: Zombie texture?
             Zombie zombie = new Zombie(
                     new Body("Zombie" + zombieID, new Box(zombieSize * 2, zombieSize * 2, zombieSize * 2)),
@@ -280,7 +279,7 @@ public class Main {
         camera.translate(-user.getPosition().x, -user.getPosition().y - 4.0f, -user.getPosition().z - 20.0f);
 
         box = new Body("box", new Box(0.5f, 0.5f, 0.5f));
-        box.setPosition(new Vector3(mainRoadWidth / 2.0f, 1.0f, -10.0f));
+        box.setPosition(new Vector3(mainRoadWidth / 2.0f, 5.0f, -10.0f));
         box.setFixed(true);
 
         // Zombies killed
@@ -394,6 +393,7 @@ public class Main {
             }
 
         }
+
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && (user.getPosition().z < -10)) {
             user.translate(0.0f, 0.0f, 0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
@@ -414,7 +414,6 @@ public class Main {
         // Special weapon 1, NUKE
         if(Keyboard.isKeyDown(Keyboard.KEY_1) && maxNukes > 0) {
             specialWeaponNumber = 1;
-            maxNukes --;
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
@@ -432,14 +431,15 @@ public class Main {
             float bombSizeTemp = bombSize;
             if(specialWeaponNumber == 1) {
                 bombSizeTemp = nukeSize;
+                maxNukes --;
             }
             specialWeaponNumber = 0;
             // TODO: bomSizeTemp scale and body doesn't work properly and implement Sphere instead of Box
-            Bomb bomb = new Bomb(new Body("Bomb" + bombs.size(), new Box(0.1, 0.1, 0.1)));
-            bomb.scale(0.5f, 0.5f, 0.5f);
+            Bomb bomb = new Bomb(new Body("Bomb" + bombs.size(), new Box(bombSizeTemp, bombSizeTemp, bombSizeTemp)));
+            bomb.scale(bombSizeTemp, bombSizeTemp, bombSizeTemp);
             bomb.translate(5.0f, 1.0f, 0.0f);
 
-            scene.addTrigger(new ContactTrigger(bomb.getBody(), 0.0001, new ContactTrigger.Callback() {
+            scene.addTrigger(new ContactTrigger(bomb.getBody(), 0.000001, new ContactTrigger.Callback() {
                 @Override
                 public void contactAboveThreshold(jinngine.physics.Body body, ContactConstraint contactConstraint) {
 
