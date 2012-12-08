@@ -36,6 +36,8 @@ public class Main {
     private ArrayList<House> houses = new ArrayList<House>();
     private ArrayList<Zombie> liveZombies = new ArrayList<Zombie>();
     private ArrayList<DeadZombie> deadZombies = new ArrayList<DeadZombie>();
+    private Texture zombieTexture;
+    private Texture bombTexture;
 
     private ArrayList<Char> zombiesKilled = new ArrayList<Char>();
 
@@ -167,9 +169,7 @@ public class Main {
             zombieID = (zombieID == Integer.MAX_VALUE) ? 0 : zombieID+1;
             // TODO: Zombie texture?
             Zombie zombie = new Zombie(
-                    new Body("Zombie" + zombieID, new Box(zombieSize * 2, zombieSize * 2, zombieSize * 2)),
-                    loadTextures("RGTI_zombies/textures/zombie.png")
-            );
+                    new Body("Zombie" + zombieID, new Box(zombieSize * 2, zombieSize * 2, zombieSize * 2)),zombieTexture);
             zombie.scale(zombieSize, zombieSize, zombieSize);
 
             zombie.getBody().setPosition(new Vector3(
@@ -266,6 +266,10 @@ public class Main {
 
         lengthOfCity = initializeHouses();
 
+
+        zombieTexture = loadTextures("RGTI_zombies/textures/zombie.png");
+        bombTexture = loadTextures("RGTI_zombies/textures/bomb.png");
+
         terrain = new Terrain(loadTextures("RGTI_zombies/textures/background.png"));
         terrain.scale(mainRoadWidth / 2, 0, lengthOfCity / 2);
         terrain.translate(mainRoadWidth / 2, -0.5f, lengthOfCity / 2);
@@ -352,7 +356,7 @@ public class Main {
     }
 
     protected void processInput() {
-        user.rotate(0,5f,0);
+        user.rotate(0,1f,0);
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) && (user.getPosition().x > user.getScale().y || godMode)) {
             user.translate(-0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
@@ -435,7 +439,7 @@ public class Main {
             }
             specialWeaponNumber = 0;
             // TODO: bomSizeTemp scale and body doesn't work properly and implement Sphere instead of Box
-            Bomb bomb = new Bomb(new Body("Bomb" + bombs.size(), new Box(bombSizeTemp, bombSizeTemp, bombSizeTemp)));
+            Bomb bomb = new Bomb(new Body("Bomb" + bombs.size(), new Box(bombSizeTemp, bombSizeTemp, bombSizeTemp)), bombTexture);
             bomb.scale(bombSizeTemp, bombSizeTemp, bombSizeTemp);
             bomb.translate(5.0f, 1.0f, 0.0f);
 

@@ -31,7 +31,7 @@ public class Settings {
     public static final float zombieObjectSpeed = 0.01f;
     public static final float zombieSize = 0.3f;
     // In seconds:
-    public static final int zombieIncreaseInterval = 2 * 1000;
+    public static final int zombieIncreaseInterval = 20 * 1000;
 
     public static final int notZombieObjectHealth = 1;
     public static final int notZombieObjectSpeed = 1;
