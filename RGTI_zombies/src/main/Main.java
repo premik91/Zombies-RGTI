@@ -271,7 +271,6 @@ public class Main {
 
         lengthOfCity = initializeHouses();
 
-
         zombieTexture = loadTextures("RGTI_zombies/textures/zombie.png");
         bombTexture = loadTextures("RGTI_zombies/textures/bomb.png");
 
