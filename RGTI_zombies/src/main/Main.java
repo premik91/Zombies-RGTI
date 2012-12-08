@@ -117,14 +117,8 @@ public class Main {
             Zombie zombie = new Zombie(new Body("Zombie"+zombieID, new Box(0.5, 0.5, 0.5)));
             zombie.scale(0.3f, 0.3f, 0.3f);
 
-            float zombieX = (float) Math.random() * mainRoadWidth;
-
-            zombieX += (minHouseWidth*1.5f);
-
-            zombieX = Math.min(zombieX, mainRoadWidth - (minHouseWidth * 1.5f));
-
             zombie.getBody().setPosition(new Vector3(
-                    zombieX,
+                    (float) Math.random() * (mainRoadWidth - zombie.getScale().x),
                     0,
                     user.getPosition().z - 30 - Math.random() * 40
             ));
@@ -234,7 +228,7 @@ public class Main {
     }
 
     private float initializeHouses() {
-        float[] positionLeft = {0, 0, 0}, positionRight = {mainRoadWidth, 0, 0};
+        float[] positionLeft = {-minHouseWidth, 0, 0}, positionRight = {mainRoadWidth+minHouseWidth, 0, 0};
         float[] width;
         House house;
 
@@ -251,7 +245,7 @@ public class Main {
             // position house
             positionLeft[2] -= width[2];
             house.scale(width[0], width[1], width[2]);
-            house.translate(-positionLeft[0], positionLeft[1], positionLeft[2]);
+            house.translate(positionLeft[0], positionLeft[1], positionLeft[2]);
             houses.add(house);
             positionLeft[2] -= width[2] + spaceBetweenHouses;
 
@@ -271,13 +265,14 @@ public class Main {
         }
         return Math.min(positionLeft[2], positionRight[2]);
     }
+
     private void addToScene() {
-        Body leftHouses = new Body("leftHouses", new Box(20, minimalHouseHeight, -lengthOfCity));
-        leftHouses.setPosition(new Vector3(0 - 9, 0, 0));
+        Body leftHouses = new Body("leftHouses", new Box(minHouseWidth, minimalHouseHeight, -lengthOfCity));
+        leftHouses.setPosition(new Vector3(-minHouseWidth, 0, 0));
         leftHouses.setFixed(true);
 
-        Body rightHouses = new Body("rightHouses", new Box(20, minimalHouseHeight, -lengthOfCity));
-        rightHouses.setPosition(new Vector3(mainRoadWidth + 9, 0, 0));
+        Body rightHouses = new Body("rightHouses", new Box(minHouseWidth, minimalHouseHeight, -lengthOfCity));
+        rightHouses.setPosition(new Vector3(mainRoadWidth+minHouseWidth, 0, 0));
         rightHouses.setFixed(true);
 
         Body floor = new Body("floor", new Box(1000, 5, 10000));
@@ -340,13 +335,13 @@ public class Main {
 
     protected void processInput() {
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)/* && (user.getPosition().x > (minHouseWidth*1.5f))*/) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) && (user.getPosition().x > 0 || godMode)) {
             user.translate(-0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.1f, 0.0f, 0.0f);
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) /*&& user.getPosition().x < (mainRoadWidth - (minHouseWidth * 1.5f))*/) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) && (user.getPosition().x < mainRoadWidth || godMode)) {
             user.translate(0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(-0.1f, 0.0f, 0.0f);
@@ -368,7 +363,7 @@ public class Main {
             }
 
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) /*&& (user.getPosition().z < -10)*/) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && (user.getPosition().z < -10)) {
             user.translate(0.0f, 0.0f, 0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.0f, 0.0f, -0.1f);
