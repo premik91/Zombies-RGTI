@@ -13,6 +13,7 @@ import jinngine.physics.solver.NonsmoothNonlinearConjugateGradient;
 import models.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.PixelFormat;
@@ -20,6 +21,7 @@ import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 import static main.Settings.*;
@@ -27,6 +29,9 @@ import static main.Utilities.loadTextures;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
+
+    private static Main main;
+
     private MainCamera camera;
     private Terrain terrain;
     private UserObject user;
@@ -58,15 +63,17 @@ public class Main {
     private int specialWeaponNumber = 0;
 
     public static void main(String[] args) {
-        Main main = new Main();
+        main = new Main();
         main.startLoop();
     }
 
     private void startLoop() {
-//        if (JOptionPane.showConfirmDialog(null, "Would You Like To Run In Fullscreen Mode?",
-//                "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
-//            Settings.fullScreen = false;
-//        }
+
+        if (JOptionPane.showConfirmDialog(null, "Would You Like To Run In Fullscreen Mode?",
+                "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
+            Settings.fullScreen = false;
+        }
+
         fullScreen = false;
 
         try {
@@ -74,35 +81,25 @@ public class Main {
                 // Quit If Window Was Not Created
                 throw new Exception();
             }
+
             initializeObjects();
             //hide the mouse
-//            Mouse.setGrabbed(true);
+            Mouse.setGrabbed(true);
 
             long FPSSync = System.currentTimeMillis();
-            while (!Keyboard.isKeyDown(exitKey) && !Display.isCloseRequested()) {
-                long currSync = System.currentTimeMillis();
+            while (!Keyboard.isKeyDown(exitKey) && !Display.isCloseRequested() && Display.isActive()) {
 
-                if (currSync-FPSSync < 10) {
+                if (System.currentTimeMillis() - FPSSync < 10) {
                     continue;
                 }
 
                 FPSSync = System.currentTimeMillis();
 
                 resetDisplay();
-                if (!Display.isActive()) {
-                    // Quit if told to
-                    break;
-                }
                 applyPhysics();
                 render();
                 processInput();
 
-                // Toggle Fullscreen / Windowed Mode
-                if (Keyboard.isKeyDown(changeWindowModeKey)) {
-                    fullScreen = !fullScreen;
-                    Display.setFullscreen(fullScreen);
-                }
-                addZombie();
                 Display.update();
             }
         } catch (Exception e) {
@@ -124,7 +121,7 @@ public class Main {
         Display.setDisplayMode(bestMode);
         Display.create(new PixelFormat(8, 8, 8, 4));
         Display.setFullscreen(fullScreen);
-        Display.setTitle(windowTitle +  " " + version);
+        Display.setTitle(windowTitle + " " + version);
         ReSizeGLScene(windowWidth, windowHeight);
         // Enable Smooth Shading
         glShadeModel(GL_SMOOTH);
@@ -235,6 +232,8 @@ public class Main {
         for(Char c: zombiesHUDKilled) {
             c.render3D();
         }
+
+        addZombie();
     }
 
     private void applyPhysics() {
@@ -530,10 +529,30 @@ public class Main {
             bombs.add(bomb);
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_A)) {}
+        if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
+            resetGame();
+        }
+
+        // Toggle Fullscreen / Windowed Mode
+        if (Keyboard.isKeyDown(changeWindowModeKey)) {
+            fullScreen = !fullScreen;
+            try {
+                Display.setFullscreen(fullScreen);
+            } catch (LWJGLException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (Keyboard.isKeyDown(Keyboard.KEY_E)) {}
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) {}
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {}
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {}
     }
+
+    private void resetGame() {
+        Display.destroy();
+        main = new Main();
+        main.startLoop();
+    }
+
 }
