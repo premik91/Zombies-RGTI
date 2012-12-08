@@ -169,7 +169,7 @@ public class Main {
         }
 
         if (liveZombies.size() < numberOfZombiesAtOnce) {
-            zombieID = (zombieID == Integer.MAX_VALUE) ? 0 : zombieID+1;
+            zombieID = (zombieID == Integer.MAX_VALUE) ? 0 : zombieID + 1;
             Zombie zombie = new Zombie(
                     new Body("Zombie" + zombieID, new Box(zombieSize * 2, zombieSize * 2, zombieSize * 2)),zombieTexture);
             zombie.scale(zombieSize, zombieSize, zombieSize);
