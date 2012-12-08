@@ -5,6 +5,7 @@ import org.lwjgl.input.Keyboard;
 
 public class Settings {
     // Main game settings
+    public static final boolean godMode = true;
     public static final String version = "0.1";
     public static final int exitKey = Keyboard.KEY_ESCAPE;
     public static final int changeWindowModeKey = Keyboard.KEY_F1;
@@ -27,7 +28,7 @@ public class Settings {
     public static final int zombieObjectHealth = 1;
     public static final float zombieObjectSpeed = 0.1f;
     // In seconds:
-    public static final int zombieIncreaseInterval = 10 * 1000;
+    public static final int zombieIncreaseInterval = 1 * 1000;
 
     public static final String notZombieObjectModel = "objects/notZombieModel.obj";
     public static final int notZombieObjectHealth = 1;
