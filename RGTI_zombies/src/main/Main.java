@@ -307,7 +307,6 @@ public class Main {
             zombiesHUDKilled.add(newChar);
             newChar.scale(0.3f, 0.3f, 0.3f);
             newChar.setPosition(position, 11, (float) box.getPosition().z + 2);
-            newChar.setRotation(new Vector3f(0, 0, 90f));
             position += 0.5;
         }
     }
@@ -320,7 +319,6 @@ public class Main {
             zombiesHUDEscaped.add(newChar);
             newChar.scale(0.3f, 0.3f, 0.3f);
             newChar.setPosition(position + mainRoadWidth, 11, (float) box.getPosition().z + 2);
-            newChar.setRotation(new Vector3f(0, 0, 90f));
             position += 0.5;
         }
     }
