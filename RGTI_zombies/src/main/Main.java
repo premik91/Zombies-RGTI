@@ -28,12 +28,7 @@ import static main.Settings.*;
 import static main.Utilities.loadTextures;
 import static org.lwjgl.opengl.GL11.*;
 
-// TODO: Should make BOMB body bigger.
-// TODO: Camera a little more back.
-// TODO: Min user object height.
 // TODO: Save achievements of user to xml/scores.xml on each ending of the game (ESC, finish, end), the example is given
-// TODO: Ask user for game type: Easy, Normal, Hard
-// TODO: Ask user for username?
 
 public class Main {
     private static Main main;
@@ -68,6 +63,7 @@ public class Main {
     private int numberOfZombiesAtOnce = 1;
     private float lengthOfCity;
     private int specialWeaponNumber = 0;
+    private int zombieIncreaseIntervalSkill = 1;
 
     public static void main(String[] args) {
         main = new Main();
@@ -79,6 +75,20 @@ public class Main {
         if (JOptionPane.showConfirmDialog(null, "Would You Like To Run In Fullscreen Mode?",
                 "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
             fullScreen = false;
+        }
+
+        String[] options = new String[] {"Easy", "Medium", "Hard"};
+        int skill = JOptionPane.showOptionDialog(null, "Select your skills.", "Skills",
+                    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[2]);
+
+        if (skill == 0) {
+            zombieIncreaseIntervalSkill = zombieIncreaseInterval;
+        } else if (skill == 1) {
+            zombieIncreaseIntervalSkill = zombieIncreaseInterval / 2;
+        } else if (skill == 2){
+            zombieIncreaseIntervalSkill = zombieIncreaseInterval / 3;
+        } else {
+            zombieIncreaseIntervalSkill = zombieIncreaseInterval;
         }
 
         try {
@@ -165,8 +175,8 @@ public class Main {
     }
 
     private void addZombie() {
-        if (System.currentTimeMillis() - zombieIncreaseTimer >= zombieIncreaseInterval) {
-            numberOfZombiesAtOnce += zombieIncreaseSizeInterval;
+        if (System.currentTimeMillis() - zombieIncreaseTimer >= zombieIncreaseIntervalSkill) {
+            numberOfZombiesAtOnce += zombieIncreaseIntervalSkill;
             zombieIncreaseTimer = System.currentTimeMillis();
         }
 
@@ -303,7 +313,7 @@ public class Main {
 
         // Create camera
         camera = new MainCamera();
-        camera.translate(-user.getPosition().x, -user.getPosition().y - 4f, -user.getPosition().z - 20f);
+        camera.translate(-user.getPosition().x, -user.getPosition().y - 4f, -user.getPosition().z - 23f);
         addToScene();
 
         // Create HUDs
@@ -481,7 +491,7 @@ public class Main {
             addZombieHUDKilled();
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_Z) && user.getPosition().y >= 0.5f && !Keyboard.isKeyDown(Keyboard.KEY_X)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_Z) && user.getPosition().y >= 1.0f && !Keyboard.isKeyDown(Keyboard.KEY_X)) {
             userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y - 0.05, user.getPosition().z));
             camera.translate(0, 0.05f, 0.1f);
 
@@ -513,8 +523,9 @@ public class Main {
                 maxNukes --;
             }
             specialWeaponNumber = 0;
+            float bombBodySizeTemp = bombSizeTemp * 1.2f;
 
-            Bomb bomb = new Bomb(new Body("Bomb" + bombs.size(), new Box(bombSizeTemp, bombSizeTemp, bombSizeTemp)), bombTexture);
+            Bomb bomb = new Bomb(new Body("Bomb" + bombs.size(), new Box(bombBodySizeTemp, bombBodySizeTemp, bombBodySizeTemp)), bombTexture);
             bomb.scale(bombSizeTemp, bombSizeTemp, bombSizeTemp);
             bomb.translate(5f, 1f, 0);
 

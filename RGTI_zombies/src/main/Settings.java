@@ -19,7 +19,7 @@ public class Settings {
 
     // Bomb settings
     public static final int bombMaxPower = 1;
-    public static final int maxBombThrowingSpeed = 10;
+    public static final int maxBombThrowingSpeed = 2;
     public static float bombSize = 0.5f;
     public static final int maxBombs = 20;
     // Special weapons in order 0 -> N
@@ -31,7 +31,7 @@ public class Settings {
     public static final float zombieObjectSpeed = 0.01f;
     public static final float zombieSize = 0.3f;
     // In seconds:
-    public static final int zombieIncreaseInterval = 20 * 1000;
+    public static final int zombieIncreaseInterval = 60 * 1000;
     public static final int zombieIncreaseSizeInterval = 5;
 
     //Houses
