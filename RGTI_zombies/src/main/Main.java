@@ -27,11 +27,14 @@ import static main.Utilities.loadTextures;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
+
+    private static Main main;
+
     private MainCamera camera;
     private Terrain terrain;
     private UserObject user;
     private jinngine.physics.Scene scene;
-    private jinngine.physics.Body userBody;
+    private jinngine.physics.Body box;
 
     private ArrayList<House> houses = new ArrayList<House>();
     private ArrayList<Zombie> liveZombies = new ArrayList<Zombie>();
@@ -63,10 +66,12 @@ public class Main {
     }
 
     private void startLoop() {
-//        if (JOptionPane.showConfirmDialog(null, "Would You Like To Run In Fullscreen Mode?",
-//                "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
-//            Settings.fullScreen = false;
-//        }
+
+        if (JOptionPane.showConfirmDialog(null, "Would You Like To Run In Fullscreen Mode?",
+                "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
+            Settings.fullScreen = false;
+        }
+
         fullScreen = false;
 
         try {
@@ -74,9 +79,10 @@ public class Main {
                 // Quit If Window Was Not Created
                 throw new Exception();
             }
+
             initializeObjects();
             //hide the mouse
-//            Mouse.setGrabbed(true);
+            Mouse.setGrabbed(true);
 
             long FPSSync = System.currentTimeMillis();
             while (!Keyboard.isKeyDown(exitKey) && !Display.isCloseRequested()) {
@@ -124,7 +130,7 @@ public class Main {
         Display.setDisplayMode(bestMode);
         Display.create(new PixelFormat(8, 8, 8, 4));
         Display.setFullscreen(fullScreen);
-        Display.setTitle(windowTitle +  " " + version);
+        Display.setTitle(windowTitle + " " + version);
         ReSizeGLScene(windowWidth, windowHeight);
         // Enable Smooth Shading
         glShadeModel(GL_SMOOTH);
@@ -216,6 +222,7 @@ public class Main {
         camera.render3D();
         terrain.render3D();
         user.render3D();
+
         for (Bomb bomb : bombs) {
             bomb.render3D();
         }
@@ -234,6 +241,8 @@ public class Main {
         for(Char c: zombiesHUDKilled) {
             c.render3D();
         }
+
+        addZombie();
     }
 
     private void applyPhysics() {
@@ -541,10 +550,30 @@ public class Main {
             bombs.add(bomb);
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_A)) {}
+        if (Keyboard.isKeyDown(Keyboard.KEY_R)) {
+            resetGame();
+        }
+
+        // Toggle Fullscreen / Windowed Mode
+        if (Keyboard.isKeyDown(changeWindowModeKey)) {
+            fullScreen = !fullScreen;
+            try {
+                Display.setFullscreen(fullScreen);
+            } catch (LWJGLException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (Keyboard.isKeyDown(Keyboard.KEY_E)) {}
         if (Keyboard.isKeyDown(Keyboard.KEY_D)) {}
         if (Keyboard.isKeyDown(Keyboard.KEY_W)) {}
         if (Keyboard.isKeyDown(Keyboard.KEY_S)) {}
     }
+
+    private void resetGame() {
+        Display.destroy();
+        main = new Main();
+        main.startLoop();
+    }
+
 }
