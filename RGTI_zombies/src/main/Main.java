@@ -29,6 +29,8 @@ import static main.Utilities.loadTextures;
 import static org.lwjgl.opengl.GL11.*;
 
 // TODO: Should make BOMB body bigger.
+// TODO: Camera a little more back.
+// TODO: Min user object height.
 public class Main {
 
     private static Main main;
