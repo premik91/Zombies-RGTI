@@ -4,3 +4,5 @@ out/
 *.iml
 .iml
 ant.xml
+
+RGTI_zombies/src/main/testing.java
