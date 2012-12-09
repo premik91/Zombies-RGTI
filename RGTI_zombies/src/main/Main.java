@@ -31,8 +31,11 @@ import static org.lwjgl.opengl.GL11.*;
 // TODO: Should make BOMB body bigger.
 // TODO: Camera a little more back.
 // TODO: Min user object height.
-public class Main {
+// TODO: Save achievements of user to xml/scores.xml on each ending of the game (ESC, finish, end), the example is given
+// TODO: Ask user for game type: Easy, Normal, Hard
+// TODO: Ask user for username?
 
+public class Main {
     private static Main main;
 
     private MainCamera camera;
