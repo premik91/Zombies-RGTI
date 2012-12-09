@@ -64,6 +64,8 @@ public class Main {
     private float lengthOfCity;
     private int specialWeaponNumber = 0;
     private int zombieIncreaseIntervalSkill = 1;
+    private boolean reset = false;
+    private boolean fullScreen = true;
 
     public static void main(String[] args) {
         main = new Main();
@@ -72,9 +74,11 @@ public class Main {
 
     private void startLoop() {
 
-        if (JOptionPane.showConfirmDialog(null, "Would You Like To Run In Fullscreen Mode?",
-                "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
-            fullScreen = false;
+        if (!reset) {
+            if (JOptionPane.showConfirmDialog(null, "Would You Like To Run In Fullscreen Mode?",
+                    "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
+                fullScreen = false;
+            }
         }
 
         String[] options = new String[] {"Easy", "Medium", "Hard"};
@@ -103,6 +107,10 @@ public class Main {
 
             long FPSSync = System.currentTimeMillis();
             while (!Keyboard.isKeyDown(exitKey) && !Display.isCloseRequested() && Display.isActive()) {
+
+                if (numberOfZombiesEscaped > 30) {
+                    resetGame();
+                }
 
                 if (System.currentTimeMillis() - FPSSync < 10) {
                     continue;
@@ -176,7 +184,7 @@ public class Main {
 
     private void addZombie() {
         if (System.currentTimeMillis() - zombieIncreaseTimer >= zombieIncreaseIntervalSkill) {
-            numberOfZombiesAtOnce += zombieIncreaseIntervalSkill;
+            numberOfZombiesAtOnce += zombieIncreaseSizeInterval;
             zombieIncreaseTimer = System.currentTimeMillis();
         }
 
@@ -591,6 +599,8 @@ public class Main {
     private void resetGame() {
         Display.destroy();
         main = new Main();
+        main.reset = true;
+        main.fullScreen = fullScreen;
         main.startLoop();
     }
 

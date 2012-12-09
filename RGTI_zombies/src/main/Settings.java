@@ -9,7 +9,6 @@ public class Settings {
     public static final int exitKey = Keyboard.KEY_ESCAPE;
     public static final int changeWindowModeKey = Keyboard.KEY_F1;
     public static final String windowTitle = "Zombies fuck you";
-    public static boolean fullScreen = true;
     public static final int windowWidth = 1280;
     public static final int windowHeight = 800;
 
