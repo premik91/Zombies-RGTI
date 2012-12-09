@@ -28,6 +28,7 @@ import static main.Settings.*;
 import static main.Utilities.loadTextures;
 import static org.lwjgl.opengl.GL11.*;
 
+// TODO: Should make BOMB body bigger.
 public class Main {
 
     private static Main main;
@@ -289,6 +290,12 @@ public class Main {
         user.scale(userSize[0], userSize[1], userSize[2]);
         user.translate(mainRoadWidth / 2f, 1f, -10f);
 
+        // Create crosshair
+        crosshair = new Crosshair(3f);
+        crosshair.scale(0.5f, 0.5f, 0.5f);
+        crosshair.setRotation(new Vector3f(90f, 0, 0));
+        crosshair.translate(mainRoadWidth / 2f, -0.5f, -10.5f);
+
         // Create camera
         camera = new MainCamera();
         camera.translate(-user.getPosition().x, -user.getPosition().y - 4f, -user.getPosition().z - 20f);
@@ -393,6 +400,7 @@ public class Main {
         user.rotate(0, 1f, 0);
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) && (user.getPosition().x > user.getScale().y || godMode)) {
             user.translate(-userObjectSpeed, 0, 0);
+            crosshair.translate(-userObjectSpeed, 0, 0);
             userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(userObjectSpeed, 0, 0);
 
@@ -406,6 +414,7 @@ public class Main {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) && (user.getPosition().x < mainRoadWidth - user.getScale().y || godMode)) {
             user.translate(userObjectSpeed, 0, 0);
+            crosshair.translate(userObjectSpeed, 0, 0);
             userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(-userObjectSpeed, 0, 0);
 
@@ -419,7 +428,7 @@ public class Main {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
             user.translate(0, 0, -userObjectSpeed);
-            crosshair.translate(0.0f, 0.0f, -0.1f);
+            crosshair.translate(0, 0, -userObjectSpeed);
             userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0, 0, userObjectSpeed);
 
@@ -444,6 +453,7 @@ public class Main {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && (user.getPosition().z < -10)) {
             user.translate(0, 0, userObjectSpeed);
+            crosshair.translate(0, 0, userObjectSpeed);
             userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0, 0, -userObjectSpeed);
 
@@ -457,7 +467,7 @@ public class Main {
         }
 
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_X) && !Keyboard.isKeyDown(Keyboard.KEY_Z)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_X) && !Keyboard.isKeyDown(Keyboard.KEY_Z) && user.getPosition().y <= houseHeightBounds) {
             userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y + 0.05, user.getPosition().z));
             camera.translate(0, -0.05f, -0.1f);
 
