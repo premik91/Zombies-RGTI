@@ -15,7 +15,6 @@ public class Bomb extends Model3D {
 
     @Override
     public void render() {
-
         glEnable(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -26,14 +25,12 @@ public class Bomb extends Model3D {
         glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
         glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 
-//        glColor4f(0,0,0,0);
+        glColor4f(1,1,1,0);
         Sphere s = new Sphere();
         s.draw(0.4f, 16, 16);
 
         glDisable(GL_TEXTURE_GEN_S);
         glDisable(GL_TEXTURE_GEN_T);
-
         glDisable(GL_TEXTURE_2D);
-
     }
 }

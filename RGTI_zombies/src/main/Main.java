@@ -35,6 +35,7 @@ public class Main {
     private MainCamera camera;
     private Terrain terrain;
     private UserObject user;
+    private Crosshair crosshair;
     private jinngine.physics.Scene scene;
     private jinngine.physics.Body box;
 
@@ -213,6 +214,7 @@ public class Main {
         camera.render3D();
         terrain.render3D();
         user.render3D();
+        crosshair.render3D();
 
         for (Bomb bomb : bombs) {
             bomb.render3D();
@@ -281,6 +283,11 @@ public class Main {
         user = new UserObject(loadTextures("RGTI_zombies/textures/user.png"));
         user.scale(userSize[0], userSize[1], userSize[2]);
         user.translate(mainRoadWidth / 2.0f, 1.0f, -10.0f);
+
+        crosshair = new Crosshair(3f);
+        crosshair.scale(0.5f, 0.5f, 0.5f);
+        crosshair.setRotation(new Vector3f(90f, 0, 0));
+        crosshair.translate(mainRoadWidth / 2.0f, -0.5f, -10.5f);
 
         camera = new MainCamera();
         camera.translate(-user.getPosition().x, -user.getPosition().y - 4.0f, -user.getPosition().z - 20.0f);
@@ -361,11 +368,11 @@ public class Main {
     }
 
     private void addToScene() {
-        Body leftHouses = new Body("leftHouses", new Box(minHouseWidth, minimalHouseHeight, -lengthOfCity));
+        Body leftHouses = new Body("leftHouses", new Box(minHouseWidth, houseHeightBounds + minimalHouseHeight, -lengthOfCity));
         leftHouses.setPosition(new Vector3(-minHouseWidth+0.6, 0, 0));
         leftHouses.setFixed(true);
 
-        Body rightHouses = new Body("rightHouses", new Box(minHouseWidth, minimalHouseHeight, -lengthOfCity));
+        Body rightHouses = new Body("rightHouses", new Box(minHouseWidth, houseHeightBounds + minimalHouseHeight, -lengthOfCity));
         rightHouses.setPosition(new Vector3(mainRoadWidth+minHouseWidth-0.6, 0, 0));
         rightHouses.setFixed(true);
 
@@ -381,6 +388,7 @@ public class Main {
         user.rotate(0,1f,0);
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) && (user.getPosition().x > user.getScale().y || godMode)) {
             user.translate(-0.1f, 0.0f, 0.0f);
+            crosshair.translate(-0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.1f, 0.0f, 0.0f);
             // Is the user far enough from both buildings not to collide
@@ -393,6 +401,7 @@ public class Main {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) && (user.getPosition().x < mainRoadWidth - user.getScale().y || godMode)) {
             user.translate(0.1f, 0.0f, 0.0f);
+            crosshair.translate(0.1f, 0.0f, 0.0f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(-0.1f, 0.0f, 0.0f);
             // Is the user far enough from both buildings not to collide
@@ -405,6 +414,7 @@ public class Main {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
             user.translate(0.0f, 0.0f, -0.1f);
+            crosshair.translate(0.0f, 0.0f, -0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.0f, 0.0f, 0.1f);
 
@@ -427,6 +437,7 @@ public class Main {
 
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && (user.getPosition().z < -10)) {
             user.translate(0.0f, 0.0f, 0.1f);
+            crosshair.translate(0.0f, 0.0f, 0.1f);
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
             camera.translate(0.0f, 0.0f, -0.1f);
             for(Char c: zombiesHUDEscaped) {
@@ -438,7 +449,7 @@ public class Main {
         }
 
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_X) && !Keyboard.isKeyDown(Keyboard.KEY_Z)) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_X) && !Keyboard.isKeyDown(Keyboard.KEY_Z) && user.getPosition().y <= houseHeightBounds) {
             box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y + 0.05, user.getPosition().z));
             camera.translate(0.0f, -0.05f, -0.1f);
             for(Char c: zombiesHUDEscaped) {
