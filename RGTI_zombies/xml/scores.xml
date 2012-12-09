@@ -2,7 +2,7 @@
 <scores>
     <player>
         <name>Jon</name>
-        <score id="zombies_killed">100</score>
-        <score id="persons_killed">20</score>
+        <killed>100</killed>
+        <escaped>20</escaped>
     </player>
 </scores>
