@@ -5,19 +5,15 @@ import org.lwjgl.util.glu.GLU;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class MainCamera extends Model3D
-{
-
-    public MainCamera()
-    {
+public class MainCamera extends Model3D {
+    public MainCamera() {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         GLU.gluPerspective(45, Settings.windowWidth / (float) Settings.windowHeight, 1.0f, 100.0f);
     }
 
     @Override
-    public void render3D()
-    {
+    public void render3D() {
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
         glTranslatef(position.x, position.y, position.z);
@@ -28,5 +24,5 @@ public class MainCamera extends Model3D
     }
 
     @Override
-    protected void render(){}
+    protected void render() {}
 }

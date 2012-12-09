@@ -31,7 +31,7 @@ public class Main {
     private Terrain terrain;
     private UserObject user;
     private jinngine.physics.Scene scene;
-    private jinngine.physics.Body box;
+    private jinngine.physics.Body userBody;
 
     private ArrayList<House> houses = new ArrayList<House>();
     private ArrayList<Zombie> liveZombies = new ArrayList<Zombie>();
@@ -42,7 +42,7 @@ public class Main {
     // HUD
     private ArrayList<Char> zombiesHUDKilled = new ArrayList<Char>();
     private ArrayList<Char> zombiesHUDEscaped = new ArrayList<Char>();
-    private Texture[] textureNumbers;
+    private Texture[] numbersTexture;
 
     // Bombs
     private ArrayList<Bomb> bombs = new ArrayList<Bomb>();
@@ -131,7 +131,7 @@ public class Main {
         // Don't render hidden faces
         glEnable(GL_CULL_FACE);
         // Depth Buffer Setup
-        glClearDepth(1.0f);
+        glClearDepth(1f);
         // Enables Depth Testing
         glEnable(GL_DEPTH_TEST);
         // The Type Of Depth Testing To Do
@@ -154,7 +154,7 @@ public class Main {
         glLoadIdentity();
 
         // Calculate The Aspect Ratio Of The Window
-        GLU.gluPerspective(45.0f, windowWidth / (float) windowHeight, 0.1f, 60.0f);
+        GLU.gluPerspective(45f, windowWidth / (float) windowHeight, 0.1f, 60f);
 
         // Select The Modelview Matrix
         glMatrixMode(GL_MODELVIEW);
@@ -172,8 +172,8 @@ public class Main {
             zombieID = (zombieID == Integer.MAX_VALUE) ? 0 : zombieID + 1;
             Zombie zombie = new Zombie(
                     new Body("Zombie" + zombieID, new Box(zombieSize * 2, zombieSize * 2, zombieSize * 2)),zombieTexture);
-            zombie.scale(zombieSize, zombieSize, zombieSize);
 
+            zombie.scale(zombieSize, zombieSize, zombieSize);
             zombie.getBody().setPosition(new Vector3(
                     (float) Math.random() * mainRoadWidth,
                     0,
@@ -216,7 +216,6 @@ public class Main {
         camera.render3D();
         terrain.render3D();
         user.render3D();
-
         for (Bomb bomb : bombs) {
             bomb.render3D();
         }
@@ -241,9 +240,9 @@ public class Main {
         try {
             scene.tick();
             user.setPosition(
-                    (float) box.getPosition().x,
-                    (float) box.getPosition().y,
-                    (float) box.getPosition().z
+                    (float) userBody.getPosition().x,
+                    (float) userBody.getPosition().y,
+                    (float) userBody.getPosition().z
             );
 
             for (Bomb bomb : bombs) {
@@ -258,7 +257,8 @@ public class Main {
                 zombie.setPosition(
                         (float) zombie.getBody().getPosition().x,
                         (float) zombie.getBody().getPosition().y,
-                        (float) zombie.getBody().getPosition().z);
+                        (float) zombie.getBody().getPosition().z
+                );
             }
         } catch (Exception e) {
             System.err.print("ConcurrentModificationException");
@@ -267,67 +267,70 @@ public class Main {
 
     private void initializeObjects() {
         scene = new DefaultScene(new SAP2(), new NonsmoothNonlinearConjugateGradient(44), new DefaultDeactivationPolicy());
-
         scene.setTimestep(0.01);
 
-        lengthOfCity = initializeHouses();
-
-
+        // Load textures
         zombieTexture = loadTextures("RGTI_zombies/textures/zombie.png");
         bombTexture = loadTextures("RGTI_zombies/textures/bomb.png");
+        numbersTexture = new Texture[10];
+        for(int i = 0; i <= 9; i++) {
+            numbersTexture[i] = loadTextures("RGTI_zombies/textures/numbers/"+i+".png");
+        }
+        // Create houses
+        lengthOfCity = initializeHouses();
 
+        // Create terrain
         terrain = new Terrain(loadTextures("RGTI_zombies/textures/background.png"));
         terrain.scale(mainRoadWidth / 2, 0, lengthOfCity / 2);
         terrain.translate(mainRoadWidth / 2, -0.5f, lengthOfCity / 2);
 
+        // Create user
         user = new UserObject(loadTextures("RGTI_zombies/textures/user.png"));
         user.scale(userSize[0], userSize[1], userSize[2]);
-        user.translate(mainRoadWidth / 2.0f, 1.0f, -10.0f);
+        user.translate(mainRoadWidth / 2f, 1f, -10f);
 
+        // Create camera
         camera = new MainCamera();
-        camera.translate(-user.getPosition().x, -user.getPosition().y - 4.0f, -user.getPosition().z - 20.0f);
+        camera.translate(-user.getPosition().x, -user.getPosition().y - 4f, -user.getPosition().z - 20f);
+        addToScene();
 
-        box = new Body("box", new Box(0.5f, 0.5f, 0.5f));
-        box.setPosition(new Vector3(mainRoadWidth / 2.0f, 5.0f, -10.0f));
-        box.setFixed(true);
-        textureNumbers = new Texture[10];
-        for(int i = 0; i <= 9; i++) {
-            textureNumbers[i] = loadTextures("RGTI_zombies/textures/numbers/"+i+".png");
-        }
+        // Create HUDs
         addZombieHUDKilled();
         addZombieHUDEscaped();
-        addToScene();
     }
 
     private void addZombieHUDKilled() {
+        // Start left HUD, display number of zombies killed
         zombiesHUDKilled.clear();
         float position = 0.5f;
-        for(char c: Integer.toString(numberOfZombiesKilled).toCharArray()) {
-            Char newChar = new Char(textureNumbers[c-48]);
+        for(char numberChar: Integer.toString(numberOfZombiesKilled).toCharArray()) {
+            Char newChar = new Char(numbersTexture[numberChar-48]);
             zombiesHUDKilled.add(newChar);
             newChar.scale(0.3f, 0.5f, 0.3f);
-            newChar.setPosition(position, 11, (float) box.getPosition().z + 2);
+            newChar.setPosition(position, (float) userBody.getPosition().y, (float) userBody.getPosition().z + 2);
             position += 0.5;
         }
     }
+
     private void addZombieHUDEscaped() {
+        // Start right HUD, display number of zombies escaped
         zombiesHUDEscaped.clear();
         String string = Integer.toString(numberOfZombiesEscaped);
         float position = -string.length() * 0.5f;
-        for(char c: string.toCharArray()) {
-            Char newChar = new Char(textureNumbers[c-48]);
+        for(char numberChar: string.toCharArray()) {
+            Char newChar = new Char(numbersTexture[numberChar-48]);
             zombiesHUDEscaped.add(newChar);
             newChar.scale(0.3f, 0.5f, 0.3f);
-            newChar.setPosition(position + mainRoadWidth, 11, (float) box.getPosition().z + 2);
+            newChar.setPosition(position + mainRoadWidth, (float) userBody.getPosition().y, (float) userBody.getPosition().z + 2);
             position += 0.5;
         }
     }
 
     private float initializeHouses() {
-        float[] positionLeft = {-minHouseWidth, 0, 0}, positionRight = {mainRoadWidth + minHouseWidth, 0, 0};
+        float[] positionLeft = {-minHouseWidth, 0, 0},
+                positionRight = {mainRoadWidth + minHouseWidth, 0, 0};
         float[] width;
         House house;
-
         Texture houseTexture = loadTextures("RGTI_zombies/textures/houseWall.png");
 
         for (int i = 0; i < 200; i++) {
@@ -338,7 +341,7 @@ public class Main {
                     (float) Math.random() * houseHeightBounds + minimalHouseHeight,
                     (float) Math.random() * houseLengthBounds + minimalHouseLength
             };
-            // position house
+            // Position house
             positionLeft[2] -= width[2];
             house.scale(width[0], width[1], width[2]);
             house.translate(positionLeft[0], width[1] - 2, positionLeft[2]);
@@ -352,7 +355,7 @@ public class Main {
                     (float) Math.random() * houseHeightBounds + minimalHouseHeight,
                     (float) Math.random() * houseLengthBounds + minimalHouseLength
             };
-            // position house
+            // Position house
             positionRight[2] -= width[2];
             house.scale(width[0], width[1], width[2]);
             house.translate(positionRight[0], width[1] - 2, positionRight[2]);
@@ -363,29 +366,37 @@ public class Main {
     }
 
     private void addToScene() {
-        Body leftHouses = new Body("leftHouses", new Box(minHouseWidth, minimalHouseHeight, -lengthOfCity));
-        leftHouses.setPosition(new Vector3(-minHouseWidth+0.6, 0, 0));
-        leftHouses.setFixed(true);
+        // Add bodies to scene for collision detection
+        Body floorBody = new Body("floor", new Box(1000, 5, 10000));
+        floorBody.setPosition(new Vector3(0, -3, 0));
+        floorBody.setFixed(true);
 
-        Body rightHouses = new Body("rightHouses", new Box(minHouseWidth, minimalHouseHeight, -lengthOfCity));
-        rightHouses.setPosition(new Vector3(mainRoadWidth+minHouseWidth-0.6, 0, 0));
-        rightHouses.setFixed(true);
+        userBody = new Body("userBody", new Box(0.5f, 0.5f, 0.5f));
+        userBody.setPosition(new Vector3(mainRoadWidth / 2f, 5f, -10f));
+        userBody.setFixed(true);
 
-        Body floor = new Body("floor", new Box(1000, 5, 10000));
-        floor.setPosition(new Vector3(0, -3, 0));
-        floor.setFixed(true);
-        scene.addBody(floor);
-        scene.addBody(leftHouses);
-        scene.addBody(rightHouses);
+        Body leftHousesBody = new Body("leftHouses", new Box(minHouseWidth, minimalHouseHeight, -lengthOfCity));
+        leftHousesBody.setPosition(new Vector3(-minHouseWidth + 0.6, 0, 0));
+        leftHousesBody.setFixed(true);
+
+        Body rightHousesBody = new Body("rightHouses", new Box(minHouseWidth, minimalHouseHeight, -lengthOfCity));
+        rightHousesBody.setPosition(new Vector3(mainRoadWidth + minHouseWidth - 0.6, 0, 0));
+        rightHousesBody.setFixed(true);
+
+        scene.addBody(floorBody);
+        scene.addBody(userBody);
+        scene.addBody(leftHousesBody);
+        scene.addBody(rightHousesBody);
     }
 
     protected void processInput() {
-        user.rotate(0,1f,0);
+        user.rotate(0, 1f, 0);
         if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) && (user.getPosition().x > user.getScale().y || godMode)) {
-            user.translate(-0.1f, 0.0f, 0.0f);
-            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-            camera.translate(0.1f, 0.0f, 0.0f);
-            // Is the user far enough from both buildings not to collide
+            user.translate(-userObjectSpeed, 0, 0);
+            userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
+            camera.translate(userObjectSpeed, 0, 0);
+
+            // Is the user is far enough from both buildings not to collide
             if(user.getPosition().x > user.getScale().x && user.getPosition().x < mainRoadWidth - user.getScale().x) {
                 user.setRotation(new Vector3f(user.getRotation().x, user.getRotation().y, 0));
             } else {
@@ -394,10 +405,11 @@ public class Main {
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) && (user.getPosition().x < mainRoadWidth - user.getScale().y || godMode)) {
-            user.translate(0.1f, 0.0f, 0.0f);
-            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-            camera.translate(-0.1f, 0.0f, 0.0f);
-            // Is the user far enough from both buildings not to collide
+            user.translate(userObjectSpeed, 0, 0);
+            userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
+            camera.translate(-userObjectSpeed, 0, 0);
+
+            // Is the user is far enough from both buildings not to collide
             if(user.getPosition().x < mainRoadWidth - user.getScale().x && user.getPosition().x > user.getScale().x) {
                 user.setRotation(new Vector3f(user.getRotation().x, user.getRotation().y, 0));
             } else {
@@ -406,71 +418,69 @@ public class Main {
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
-            user.translate(0.0f, 0.0f, -0.1f);
-            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-            camera.translate(0.0f, 0.0f, 0.1f);
+            user.translate(0, 0, -userObjectSpeed);
+            userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
+            camera.translate(0, 0, userObjectSpeed);
 
             if (user.getPosition().z <= lengthOfCity + 30) {
                 float distanceBetweenCameraAndUser = user.getPosition().z + camera.getPosition().z;
                 user.setPosition(user.getPosition().x,user.getPosition().y,0f);
                 camera.setPosition(camera.getPosition().x,camera.getPosition().y,0f);
-                user.translate(0f, 0f, -10.0f);
+                user.translate(0, 0, -10f);
                 camera.translate(0f, 0f, -user.getPosition().z + distanceBetweenCameraAndUser);
-                box.setPosition(user.getPosition().x,user.getPosition().y,user.getPosition().z);
+                userBody.setPosition(user.getPosition().x,user.getPosition().y,user.getPosition().z);
                 liveZombies.clear();
             }
+
+            // Move HUDs
             for(Char c: zombiesHUDEscaped) {
-                c.translate(0.0f, 0.0f, -0.1f);
+                c.translate(0, 0, -userObjectSpeed);
             }
             for(Char c: zombiesHUDKilled) {
-                c.translate(0.0f, 0.0f, -0.1f);
+                c.translate(0, 0, -userObjectSpeed);
             }
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) && (user.getPosition().z < -10)) {
-            user.translate(0.0f, 0.0f, 0.1f);
-            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
-            camera.translate(0.0f, 0.0f, -0.1f);
+            user.translate(0, 0, userObjectSpeed);
+            userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y, user.getPosition().z));
+            camera.translate(0, 0, -userObjectSpeed);
+
+            // Move HUDs
             for(Char c: zombiesHUDEscaped) {
-                c.translate(0.0f, 0.0f, 0.1f);
+                c.translate(0, 0, userObjectSpeed);
             }
             for(Char c: zombiesHUDKilled) {
-                c.translate(0.0f, 0.0f, 0.1f);
+                c.translate(0, 0, userObjectSpeed);
             }
         }
 
 
         if (Keyboard.isKeyDown(Keyboard.KEY_X) && !Keyboard.isKeyDown(Keyboard.KEY_Z)) {
-            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y + 0.05, user.getPosition().z));
-            camera.translate(0.0f, -0.05f, -0.1f);
-            for(Char c: zombiesHUDEscaped) {
-                c.translate(0.0f, 0.05f, 0.1f);
-            }
-            for(Char c: zombiesHUDKilled) {
-                c.translate(0.0f, 0.05f, 0.1f);
-            }
+            userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y + 0.05, user.getPosition().z));
+            camera.translate(0, -0.05f, -0.1f);
+
+            // Move HUDs
+            addZombieHUDEscaped();
+            addZombieHUDKilled();
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_Z) && user.getPosition().y >= 0.5f && !Keyboard.isKeyDown(Keyboard.KEY_X)) {
-            box.setPosition(new Vector3(user.getPosition().x, user.getPosition().y - 0.05, user.getPosition().z));
-            camera.translate(0.0f, 0.05f, 0.1f);
-            for(Char c: zombiesHUDEscaped) {
-                c.translate(-0.0f, -0.05f, -0.1f);
-            }
-            for(Char c: zombiesHUDKilled) {
-                c.translate(-0.0f, -0.05f, -0.1f);
-            }
+            userBody.setPosition(new Vector3(user.getPosition().x, user.getPosition().y - 0.05, user.getPosition().z));
+            camera.translate(0, 0.05f, 0.1f);
+
+            // Move HUDs
+            addZombieHUDEscaped();
+            addZombieHUDKilled();
         }
 
         // Special weapon 1, NUKE
         if(Keyboard.isKeyDown(Keyboard.KEY_N) && maxNukes > 0) {
             specialWeaponNumber = 1;
-            System.out.println(specialWeaponNumber);
         }
 
         if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-
-            if (bombs.size() > 20) {
+            if (bombs.size() > maxBombs) {
                 scene.removeBody(bombs.get(0).getBody());
                 bombs.remove(0);
             }
@@ -478,6 +488,7 @@ public class Main {
             if ((System.currentTimeMillis() - bombTimer) <= 1000 / maxBombThrowingSpeed) {
                 return;
             }
+
             bombTimer = System.currentTimeMillis();
 
             float bombSizeTemp = bombSize;
@@ -486,14 +497,14 @@ public class Main {
                 maxNukes --;
             }
             specialWeaponNumber = 0;
+
             Bomb bomb = new Bomb(new Body("Bomb" + bombs.size(), new Box(bombSizeTemp, bombSizeTemp, bombSizeTemp)), bombTexture);
             bomb.scale(bombSizeTemp, bombSizeTemp, bombSizeTemp);
-            bomb.translate(5.0f, 1.0f, 0.0f);
+            bomb.translate(5f, 1f, 0);
 
-            scene.addTrigger(new ContactTrigger(bomb.getBody(), 0.000001, new ContactTrigger.Callback() {
+            scene.addTrigger(new ContactTrigger(bomb.getBody(), 0.000001f, new ContactTrigger.Callback() {
                 @Override
                 public void contactAboveThreshold(jinngine.physics.Body body, ContactConstraint contactConstraint) {
-
                     for (Zombie z : liveZombies) {
                         if (z.getBody().identifier.equals(body.identifier)) {
                             int currZombieHealth = z.getZombieHealth() - bombMaxPower;
@@ -523,9 +534,9 @@ public class Main {
             scene.addForce(new GravityForce(bomb.getBody()));
             scene.addBody(bomb.getBody());
             bomb.getBody().setPosition(new Vector3(
-                    box.getPosition().x,
-                    box.getPosition().y - 0.3,
-                    box.getPosition().z
+                    userBody.getPosition().x,
+                    userBody.getPosition().y - 0.3,
+                    userBody.getPosition().z
             ));
             bombs.add(bomb);
         }
