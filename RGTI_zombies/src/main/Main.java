@@ -531,9 +531,9 @@ public class Main {
                 maxNukes --;
             }
             specialWeaponNumber = 0;
-            bombSizeTemp *= 1.2f;
+            float fixedBombSizeBody = bombSizeTemp * 1.2f;
 
-            Bomb bomb = new Bomb(new Body("Bomb" + bombs.size(), new Box(bombSizeTemp, bombSizeTemp, bombSizeTemp)), bombTexture);
+            Bomb bomb = new Bomb(new Body("Bomb" + bombs.size(), new Box(fixedBombSizeBody, fixedBombSizeBody, fixedBombSizeBody)), bombTexture);
             bomb.scale(bombSizeTemp, bombSizeTemp, bombSizeTemp);
             bomb.translate(5f, 1f, 0);
 
