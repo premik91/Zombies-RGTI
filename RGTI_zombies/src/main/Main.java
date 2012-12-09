@@ -126,7 +126,7 @@ public class Main {
                 Display.update();
             }
 
-            updateScore("test", numberOfZombiesKilled, numberOfZombiesEscaped);
+//            updateScore("test", numberOfZombiesKilled, numberOfZombiesEscaped);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -600,7 +600,7 @@ public class Main {
     }
 
     private void resetGame() {
-        updateScore("test", numberOfZombiesKilled, numberOfZombiesEscaped);
+//        updateScore("test", numberOfZombiesKilled, numberOfZombiesEscaped);
         Display.destroy();
         main = new Main();
         main.reset = true;
