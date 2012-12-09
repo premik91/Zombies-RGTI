@@ -108,7 +108,7 @@ public class Main {
             long FPSSync = System.currentTimeMillis();
             while (!Keyboard.isKeyDown(exitKey) && !Display.isCloseRequested() && Display.isActive()) {
 
-                if (numberOfZombiesEscaped > 30) {
+                if (numberOfZombiesEscaped > 100) {
                     resetGame();
                 }
 
