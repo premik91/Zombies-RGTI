@@ -13,6 +13,7 @@ import jinngine.physics.solver.NonsmoothNonlinearConjugateGradient;
 import models.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.PixelFormat;
@@ -20,6 +21,7 @@ import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.opengl.Texture;
 
+import javax.swing.*;
 import java.util.ArrayList;
 
 import static main.Settings.*;
@@ -34,7 +36,7 @@ public class Main {
     private Terrain terrain;
     private UserObject user;
     private jinngine.physics.Scene scene;
-    private jinngine.physics.Body box;
+    private jinngine.physics.Body userBody;
 
     private ArrayList<House> houses = new ArrayList<House>();
     private ArrayList<Zombie> liveZombies = new ArrayList<Zombie>();
