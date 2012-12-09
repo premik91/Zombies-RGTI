@@ -25,7 +25,7 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 import static main.Settings.*;
-import static main.Utilities.loadTextures;
+import static main.Utilities.*;
 import static org.lwjgl.opengl.GL11.*;
 
 // TODO: Save achievements of user to xml/scores.xml on each ending of the game (ESC, finish, end), the example is given
@@ -125,6 +125,9 @@ public class Main {
 
                 Display.update();
             }
+
+            updateScore("test", numberOfZombiesKilled, numberOfZombiesEscaped);
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -597,6 +600,7 @@ public class Main {
     }
 
     private void resetGame() {
+        updateScore("test", numberOfZombiesKilled, numberOfZombiesEscaped);
         Display.destroy();
         main = new Main();
         main.reset = true;
