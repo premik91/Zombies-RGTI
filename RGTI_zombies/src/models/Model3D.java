@@ -10,7 +10,6 @@ public abstract class Model3D {
 
     protected Vector3f position = new Vector3f();
     protected Vector3f rotation = new Vector3f();
-
     protected Vector3f scale = new Vector3f();
 
     protected Body body;

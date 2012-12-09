@@ -14,14 +14,14 @@ public class Settings {
     public static final int windowHeight = 800;
 
     // User object settings
-    public static final int userObjectMaxHealth = 20;
-    public static final int userObjectSpeed = 1;
+    public static final float userObjectSpeed = 0.1f;
     public static final float[] userSize = {1.8f, 0.5f, 1.2f};
 
     // Bomb settings
     public static final int bombMaxPower = 1;
     public static final int maxBombThrowingSpeed = 10;
     public static float bombSize = 0.5f;
+    public static final int maxBombs = 20;
     // Special weapons in order 0 -> N
     public static float nukeSize = 2f;
     public static int maxNukes = 5;
@@ -33,9 +33,6 @@ public class Settings {
     // In seconds:
     public static final int zombieIncreaseInterval = 20 * 1000;
     public static final int zombieIncreaseSizeInterval = 5;
-
-    public static final int notZombieObjectHealth = 1;
-    public static final int notZombieObjectSpeed = 1;
 
     //Houses
     public static final int houseHeightBounds = 10;

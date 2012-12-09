@@ -63,6 +63,11 @@ public class House extends Model3D {
         glTexCoord2f(0,1);
         glVertex3f(d[0],d[1],d[2]);
 
+//        glVertex3f(b[0],b[1],b[2]);
+//        glVertex3f(a[0],a[1],a[2]);
+//        glVertex3f(e[0],e[1],e[2]);
+//        glVertex3f(f[0],f[1],f[2]);
+
         glTexCoord2f(0,0);
         glVertex3f(d[0],d[1],d[2]);
         glTexCoord2f(1,0);
