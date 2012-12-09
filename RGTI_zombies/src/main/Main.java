@@ -72,10 +72,8 @@ public class Main {
 
         if (JOptionPane.showConfirmDialog(null, "Would You Like To Run In Fullscreen Mode?",
                 "Start Fullscreen?", JOptionPane.YES_NO_OPTION) == 1) {
-            Settings.fullScreen = false;
+            fullScreen = false;
         }
-
-        fullScreen = false;
 
         try {
             if (!CreateGLWindow(windowTitle, windowWidth, windowHeight, fullScreen)) {
@@ -196,7 +194,7 @@ public class Main {
 
     private void removeUnseenZombies(){
         for (int i = 0; i < liveZombies.size(); i++) {
-            if (liveZombies.get(i).getBody().getPosition().z > user.getPosition().z+15) {
+            if (liveZombies.get(i).getBody().getPosition().z > user.getPosition().z + 20) {
                 scene.removeBody(liveZombies.get(i).getBody());
                 liveZombies.remove(i--);
                 numberOfZombiesEscaped++;
