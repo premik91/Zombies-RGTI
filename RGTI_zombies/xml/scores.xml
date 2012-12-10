@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <scores>
-    <player>
-        <name>Jon</name>
-        <killed>100</killed>
-        <escaped>20</escaped>
-    </player>
+<player>
+    <name>Jon</name>
+    <killed>100</killed>
+    <escaped>20</escaped>
+</player>
+
+<player>
+	<name>test</name>
+	<killed>0</killed>
+	<escaped>0</escaped>
+</player>
 </scores>
+
