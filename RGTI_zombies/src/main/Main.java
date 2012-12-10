@@ -60,7 +60,7 @@ public class Main {
     private int zombieID = 0;
     private int numberOfZombiesEscaped = 0;
     private int numberOfZombiesKilled = 0;
-    private int numberOfZombiesAtOnce = 1;
+    private int numberOfZombiesAtOnce = 10;
     private float lengthOfCity;
     private int specialWeaponNumber = 0;
     private int zombieIncreaseIntervalSkill = 1;
@@ -126,7 +126,7 @@ public class Main {
                 Display.update();
             }
 
-            updateScore("user"+numberOfZombiesKilled/numberOfZombiesEscaped, numberOfZombiesKilled, numberOfZombiesEscaped);
+            updateScore("user"+(numberOfZombiesKilled+1)/(numberOfZombiesEscaped+1), numberOfZombiesKilled, numberOfZombiesEscaped);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -600,7 +600,7 @@ public class Main {
     }
 
     private void resetGame() {
-        updateScore("user"+numberOfZombiesKilled/numberOfZombiesEscaped, numberOfZombiesKilled, numberOfZombiesEscaped);
+        updateScore("user"+(numberOfZombiesKilled+1)/(numberOfZombiesEscaped+1), numberOfZombiesKilled, numberOfZombiesEscaped);
         Display.destroy();
         main = new Main();
         main.reset = true;

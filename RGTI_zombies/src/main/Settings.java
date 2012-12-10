@@ -18,7 +18,7 @@ public class Settings {
 
     // Bomb settings
     public static final int bombMaxPower = 1;
-    public static final int maxBombThrowingSpeed = 2;
+    public static final int maxBombThrowingSpeed = 20;
     public static float bombSize = 0.5f;
     public static final int maxBombs = 20;
     // Special weapons in order 0 -> N

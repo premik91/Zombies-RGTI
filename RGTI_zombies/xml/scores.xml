@@ -11,5 +11,11 @@
 	<killed>0</killed>
 	<escaped>0</escaped>
 </player>
+
+<player>
+	<name>user4</name>
+	<killed>3</killed>
+	<escaped>0</escaped>
+</player>
 </scores>
 
