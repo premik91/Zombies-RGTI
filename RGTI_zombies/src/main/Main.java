@@ -28,8 +28,6 @@ import static main.Settings.*;
 import static main.Utilities.*;
 import static org.lwjgl.opengl.GL11.*;
 
-// TODO: Save achievements of user to xml/scores.xml on each ending of the game (ESC, finish, end), the example is given
-
 public class Main {
     private static Main main;
 

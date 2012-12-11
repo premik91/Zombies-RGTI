@@ -17,5 +17,23 @@
 	<killed>3</killed>
 	<escaped>0</escaped>
 </player>
+
+<player>
+	<name>user6</name>
+	<killed>88</killed>
+	<escaped>13</escaped>
+</player>
+
+<player>
+	<name>user16</name>
+	<killed>81</killed>
+	<escaped>4</escaped>
+</player>
+
+<player>
+	<name>user16</name>
+	<killed>32</killed>
+	<escaped>1</escaped>
+</player>
 </scores>
 
