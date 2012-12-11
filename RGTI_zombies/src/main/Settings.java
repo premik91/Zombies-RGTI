@@ -9,8 +9,8 @@ public class Settings {
     public static final int exitKey = Keyboard.KEY_ESCAPE;
     public static final int changeWindowModeKey = Keyboard.KEY_F1;
     public static final String windowTitle = "Zombies fuck you";
-    public static final int windowWidth = 1280;
-    public static final int windowHeight = 800;
+    public static final int windowWidth = 1024;
+    public static final int windowHeight = 768;
 
     // User object settings
     public static final float userObjectSpeed = 0.1f;

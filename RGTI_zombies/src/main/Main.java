@@ -13,7 +13,6 @@ import jinngine.physics.solver.NonsmoothNonlinearConjugateGradient;
 import models.*;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.PixelFormat;
@@ -25,7 +24,8 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 import static main.Settings.*;
-import static main.Utilities.*;
+import static main.Utilities.loadTextures;
+import static main.Utilities.updateScore;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
@@ -101,7 +101,7 @@ public class Main {
 
             initializeObjects();
             //hide the mouse
-            Mouse.setGrabbed(true);
+            //Mouse.setGrabbed(true);
 
             long FPSSync = System.currentTimeMillis();
             while (!Keyboard.isKeyDown(exitKey) && !Display.isCloseRequested() && Display.isActive()) {

@@ -35,5 +35,29 @@
 	<killed>32</killed>
 	<escaped>1</escaped>
 </player>
+
+<player>
+	<name>user1</name>
+	<killed>0</killed>
+	<escaped>0</escaped>
+</player>
+
+<player>
+	<name>user1</name>
+	<killed>0</killed>
+	<escaped>0</escaped>
+</player>
+
+<player>
+	<name>user1</name>
+	<killed>0</killed>
+	<escaped>0</escaped>
+</player>
+
+<player>
+	<name>user2</name>
+	<killed>90</killed>
+	<escaped>30</escaped>
+</player>
 </scores>
 
